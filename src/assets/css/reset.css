@@ -1,0 +1,95 @@
+*,
+*::before,
+*::after {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+	user-select: none; /* 禁止用户鼠标在页面上选中文字/图片等 */
+	-webkit-tap-highlight-color: transparent; /* webkit是苹果浏览器引擎，tap点击，highlight背景高亮，color颜色，颜色用数值调节 */
+	background: #f0f0f0;
+	color: #666;
+	/* rem vw/vh */
+	width: 100vw;
+}
+
+a {
+	color: #666;
+	text-decoration: none;
+}
+
+
+.clear-fix::after {
+	clear: both;
+	content: '';
+	display: block;
+	width: 0;
+	height: 0;
+	visibility: hidden;
+}
+
+.clear-fix {
+	zoom: 1;
+}
+
+.left {
+	float: left;
+}
+
+.right {
+	float: right;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	margin: 0;
+}
+.un{
+	font-size: 0.3rem;
+	text-align: center;
+	line-height: 9rem;
+	color: #999;
+}
+.bg{
+	width: 100%;
+	height: 82vh;
+	background-color: #f4f4f4;
+	overflow: scroll;
+	padding-bottom: 18vh;
+}
+p,span,input,button{
+	font-size: 0.3rem;
+	color: #333333;
+}
+
+ul,ol {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+p,dl,dd {
+	margin: 0;
+}
+
+a {
+	text-decoration: none;
+	color: #333;
+}
+
+
+i,em {
+	font-style: normal;
+}
+
+input,textarea {
+	outline: none;
+	border: none;
+}
+
+button{
+	margin: 0 ;
+	padding: 0 ;
+}

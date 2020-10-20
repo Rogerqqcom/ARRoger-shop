@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+
+</head>
+<style>
+	.triangle_border_up {
+		border:50px solid red;
+		border-bottom: 0;
+		border-left: 50px solid transparent;
+		border-right: 50px solid transparent;
+		width: 0;
+
+	}
+</style>
+<body>
+<!--使用原生js实现双向数据绑定，前端数据劫持，使用defineProperty,(代表Vue js)-->
+
+<input type="text" id="aa">
+<span id="bb">{{hello}}</span>
+<div class= "triangle_border_up"></div>
+
+<script>
+	var obj = {};
+	Object.defineProperty(obj, 'hello', {
+	  set:function (val) {
+	    document.getElementById('bb').innerHTML = val;
+	    document.getElementById('aa').value = val
+    }
+	})
+	document.getElementById('aa').onkeyup = function (e) {
+	  obj.hello = e.target.value;
+  }
+  obj.hello = ""
+  console.log(2);
+  console.log(2.0=='2'==new Boolean(true)=='1');
+  for(let i = 1; i<=5;i++) {
+    setTimeout(function () {
+      // console.log(i);
+    },1000)
+	}
+
+  // //冒泡排序
+	// var arr = [1, 3, 6, 4, 9, 8]
+	// function sortBubble(arr) {
+  //   for (var i=0; i<arr.length;i++) {
+  //     for (var j=0; j<arr.length-i;j++) {
+  //       if (arr[j]>arr[j+1]){
+  //         var temp = arr[j];
+  //         arr[j] = arr[j+1];
+  //         arr[j+1] = temp;
+	// 			}
+	// 		}
+	// 	}
+  //   return arr;
+	//
+  // }
+  // // console.log(sortBubble(arr));
+  // //冒泡排序：
+  // //相邻元素进行互相交换
+  // var arr1 = [56, 3, 89, 34, 9, 2];
+  // document.write("原数组：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+ arr1 +"<br/>");
+	//
+  // function bubbleSort(arr,flag) {
+  //   for (var i = 0; i < arr.length; i++) {       //冒泡排序的循环的次数
+  //     // console.log(i);  //遍历6次
+  //     for (var j = 0; j < arr.length - i; j++) {    //相邻元素进行比较
+  //       console.log(j);
+  //       if (flag == 1) {                       //flag为1时为升序排列
+  //         if (arr[j] > arr[j + 1]) {         //进行元素的交换
+  //           var temp = arr[j];
+  //           arr[j] = arr[j + 1];
+  //           arr[j + 1] = temp;
+  //         }
+  //       }else if(flag == 2){                   //flag为2时为降序排列
+  //         if (arr[j] < arr[j + 1]) {         //进行元素的交换
+  //           var temp = arr[j];
+  //           arr[j] = arr[j + 1];
+  //           arr[j + 1] = temp;
+  //         }
+  //       }
+  //     }
+  //   }
+  //   return arr;
+	//
+  // }
+  // // console.log(bubbleSort(arr1,2));     //进行降序升序的封装
+  // document.write("排序后的数组："+ bubbleSort(arr1,1));
+	//
+  // var Arr=[1,2,2,3,3,4]
+	// Arr = Array.from(new Set(Arr))
+  // console.log(Arr);
+  var url="http://www.demo.cn/index.html?key1=val1&key2-val2"
+	function f(argu) {
+    var str = argu.split('?')[1];
+    var result = {}
+    var temp = str.split('&');
+    for (var i=0; i<temp.length; i++) {
+      var temp2 = temp[i].split('=')
+			result[temp2[0]] = temp2[1]
+		}
+    return result
+  }
+
+  console.log(f(url));
+
+
+ /* // url参数解析
+
+  function getUrlkey(url) {
+
+    var params = {};
+
+    var urls = url.split("?");                  console.log('1_分割url:', urls)
+
+    var arr = urls[1].split("&");               console.log('2_分割urls[1]:', arr)
+
+    for (var i = 0, l = arr.length; i < l; i++) {
+
+      var a = arr[i].split("=");                console.log('3_遍历 arr 并分割后赋值给a:', a[0], a[1])
+
+      params[a[0]] = a[1];                      console.log('4_a给params对象赋值:', params)
+
+    }                                           console.log('5_结果:', params)
+
+    return params;
+
+  }
+  console.log('6_结果:',getUrlkey('http//aaa/txt.php?a=1&b=2&c=3'))*/
+
+/*  // 算法题之统计字符串中出现最多的字母
+	var arr = [];
+	function txt() {
+	  var j = 0;
+	  for(var i = 0; i< str.length; i++) {
+	    if (arr.indexOf(str[i]) == -1) { //查找arr数组中是否存在str[i],即相同的字符串，没有则返回-1； 有则返回索引值
+	      arr.push(str[i]);
+        // console.log(arr);
+      }
+		}
+	  for (var j=0; j<arr.length;j++) {
+	    var a = arr[j]
+      // console.log(a);
+      var dd = str.split(a);
+      console.log(dd);
+      console.log(dd.length);
+      // var dd = str.split(a).length - 1;
+      // console.log('字母' + a + '出现了' + dd + '次');
+    }
+  }
+  var str = "aybacddeeesa"
+	txt(str)
+/!*原理：
+1.循环字符串，将其中出现的所有字母（不重复）添加入一个数组arr
+2.循环arr数组，用arr中的字符对字符串利用splic剪切，得到的数组长度减一即字符出现次数*!/*/
+
+/*有 Student 和 Person 两个类, Person 类有 name 属性和 sayName 方 法,
+Student 类继承自 Person 类. 分别使用 ES5 和 ES6 的语法实现.*/
+// ES6实现
+/*	class Person{
+	  constructor(props) {
+	    this.name = props.name;
+    }
+    sayName() {
+      console.log(`我的名字是 ${this.name}`);
+    }
+	}
+
+	class Student extends Person{
+	  constructor(props) {
+      super(props);
+      this.name = props.name
+    }
+	}
+	*/
+/*
+//		ES5实现
+	function Person(name = "") {
+	  this.name = name;
+  }
+  Person.prototype.sayName=function () {
+    console.log(`my name is $(this.name}`);
+  }
+
+  function Student(name) {
+	  Person.call(this, name)
+  }
+  Student.prototype = new Person();
+	Student.prototype.constructor = Student;
+*/
+
+  // // 使用 js 求 10000 以内的所有质数的和.
+	// function getZs(num) {
+	// 	var sum = 0;
+	// 	for (var i =2; i < num; i++) {
+	// 	  //假设所有的数都是质数
+	// 		var flag = true;
+	// 		//通过嵌套循环找到 i 除了1和本身以外所有可能出现的因子
+	// 		for (var j = 2; j < i; j++) {
+	// 		  if (i % j == 0) {//能进到当前的分支 说明不是质数
+	// 		    flag =false;
+	// 			}
+	// 		}
+	// 		if (flag == true) {
+  //       console.log(i);
+  //       sum += i;
+  //     }
+  //   }
+	// 	// return sum;
+  //   console.log(sum);
+  // }
+  // getZs(10000)
+  // 使用 js 打印出 1-10000 之间的所有对称数(如 121, 1331)
+	function isSymNum(start, end) {
+	  start = (start <= 11 ? 11 : start);
+	  for (var i = start; i <= end; i++) {
+	    var strI = +(i.toString().split('').reverse().join(''))
+			if (strI == i) {
+        console.log(i);
+      }
+		}
+  }
+  isSymNum(1, 1000)
+
+  window.addEventListener("storage",function(event){
+    console.log("value is"+localStorage.getItem("value"));
+    console.log("key is"+event.newValue);
+	},false);
+
+</script>
+<div class="center">center</div>
+<div class="left">left</div>
+<div class="right">right</div>
+
+<input type="text"/>
+<button id="btn">Click</button>
+<script>
+  window.οnlοad=function(){
+    var oBtn=document.getElementById("btn");
+    var oInput=document.getElementsByTagName("input")[0];
+    oBtn.οnclick=function(){
+      var val=oInput.value; localStorage.setItem("value",val);
+    }
+  }
+
+</script>
+</body>
+<style>
+	*{
+		margin: 0;
+		padding: 0;
+	}
+	html, body{
+		height: 100%;
+	}
+	.center {
+		height: 100%;
+		background-color: #1FA363;
+		margin: 0 200px;
+	}
+	.left, .right{
+		width: 200px;
+		height: 100%;
+	}
+	.left {
+		position: absolute;
+		left: 0;
+		top: 0;
+		background-color: #ffce44;
+	}
+	.right {
+		position: absolute;
+		right: 0;
+		top: 0;
+		background-color: #f00;
+	}
+</style>
+</html>
