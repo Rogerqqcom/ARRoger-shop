@@ -36,7 +36,7 @@
       CheckButton
     },
     updated() {
-      //全选汇总价格
+      /*//全选汇总价格
         if(this.cartList.length !== 0){
           //1.通过ES6的高级数组.filter()方法，返回item.cheched的元素并组成一个新数组
           //2.补充：ES6的高级数组.map()方法为原始数组元素调用函数处理后的值组成新数组。
@@ -54,7 +54,19 @@
           // console.log(typeof(Sum));
           this.sum = Sum
           // console.log(this.sum);
-        }
+        }*/
+      let arr = []
+      arr.push(this.cartList.filter(item => item.checked))
+      console.log(arr);
+      //3.对上面filter拿到的数组进行数组内的对象内的某个属性进行累加,
+      let Sum = 0
+      for(let i=0; i<arr[0].length; i++) {
+        // console.log(arr[0].[i].Subtotal);
+        Sum += arr[0].[i].Subtotal
+      }
+      // console.log(typeof(Sum));
+      this.sum = Sum
+      // console.log(this.sum);
     },
     computed: {
       //获取商品选中的数量

@@ -16,6 +16,9 @@ export default new Vuex.Store({
     addressId:'',
     //购物车列表数据
     // cartList: []
+    //结算商品数据
+    commodity: []
+
   },
   mutations: {
     //编辑地址

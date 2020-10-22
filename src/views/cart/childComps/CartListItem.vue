@@ -1,136 +1,171 @@
-<template>
-<!--  <div class="cart-list" v-for="(oneItem,index) in cartList" :key="index">-->
-    <div id="shop-item" >
-      <div class="item-selector" v-for="(oneItem,index) in oneUser.cartList" :key="'item-selector'+index">
-        <!--      <CheckButton @checkBtnClick="checkedChange" v-model="itemInfo.checked"></CheckButton>-->
-        <CheckButton :is-checked="oneItem.checked" @click.native="checkClick"/>
-      </div>
-      <div class="item-img"  v-for="(oneItem,index) in oneUser.cartList" :key="'item-img'+index">>
-        <img :src="oneItem.image" alt="商品图片">
-      </div>
-      <div class="item-info"  v-for="(oneItem,index) in oneUser.cartList" :key="index">
-        <div class="item-title">{{oneItem.title}}</div>
-        <div class="item-desc">{{oneItem.desc}}</div>
-        <div class="info-bottom">
-          <div class="item-price">¥{{oneItem.Subtotal}}</div>
-          <div class="item-count">
-            <button @click="reduce(index)">-</button>
-            <span>x{{oneItem.num}}</span>
-            <button @click="add(index)">+</button>
-          </div>
+<!--<template>
+  <div id="shop-item">
+    <div class="item-selector">
+      &lt;!&ndash;      <CheckButton @checkBtnClick="checkedChange" v-model="itemInfo.checked"></CheckButton>&ndash;&gt;
+      <CheckButton :is-checked="oneItem.checked" @click.native="checkClick"/>
+    </div>
+    <div class="item-img">
+      <img :src="oneItem.image" alt="商品图片">
+    </div>
+    <div class="item-info">
+      <div class="item-title">{{oneItem.title}}</div>
+      <div class="item-desc">{{oneItem.desc}}</div>
+      <div class="info-bottom">
+        <div class="item-price">¥{{oneItem.Subtotal}}</div>
+        <div class="item-count">
+          <button @click="reduce()">-</button>
+          <span>x{{oneItem.num}}</span>
+          <button @click="add()">+</button>
         </div>
       </div>
     </div>
-<!--  </div>-->
-
+  </div>
+</template>-->
+<template>
+  <div id="shop-item">
+    <div class="item-selector">
+      <!--      <CheckButton @checkBtnClick="checkedChange" v-model="itemInfo.checked"></CheckButton>-->
+      <CheckButton :is-checked="itemInfo.checked" @click.native="checkClick"/>
+    </div>
+    <div class="item-img">
+      <img :src="itemInfo.image" alt="商品图片">
+    </div>
+    <div class="item-info">
+      <div class="item-title">{{itemInfo.title}}</div>
+      <div class="item-desc">{{itemInfo.desc}}</div>
+      <div class="info-bottom">
+        <div class="item-price">¥{{itemInfo.Subtotal}}</div>
+        <div class="item-count">
+          <button @click="reduce()">-</button>
+          <span>x{{itemInfo.count}}</span>
+          <button @click="add()">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
   import CheckButton from "components/content/checkButton/CheckButton";
 
+  export default {
+    // 在App.vue中声明后，注入依赖刷新
+    inject: ['reload'],
+    name: "CartListItem",
+    components: {
+      CheckButton
+    },
+    data() {
+      return {
+        flag: false
+      }
+    },
+    props: {
+      itemInfo: {
+        type: Object,
+        default() {
+          return {}
+        }
+      }
+    },
+    methods: {
+      checkClick() {
+        // //点击时让页面进行刷新，解决无法点击新增商品的选中按钮
+        // if (!this.flag) {
+        //   this.reload()
+        //   this.flag = true
+        // }
+        this.itemInfo.checked = !this.itemInfo.checked
+        // for (let i=0; i<this.$store.state.cartList.length; i++) {
+        //   if (this.itemInfo.id == this.$store.state.cartList[i].id) {
+        //     // this.reload()
+        //     this.itemInfo.checked = !this.$store.state.cartList[i].checked
+        //   }
+        // }
+      },
+      reduce() {
+        console.log('----------1');
+      },
+      add() {
+        console.log('++++++++++++++1');
+      }
+    },
+    mounted() {
+      // this.reload()
+    }
+  }
+</script>
+<!--<script>
+  import CheckButton from "components/content/checkButton/CheckButton";
+
   import {getOneUser, putUser} from "../../../network/user";
-  // import {mapActions} from 'vuex'
+
   export default {
     name: "CartListItem",
     data() {
       return {
-        oneUser: {},
-        click: 0,
-        oneItem: {}
+        oneItem: {
+        },
+        oneUser: {}
       }
     },
     components: {
       CheckButton,
     },
-    // props: {
-    //   itemInfo: {
-    //     type: Object,
-    //     default() {
-    //       return {}
-    //     }
-    //   }
-    // },
+    props: {
+      itemInfo: {
+        type: Object,
+        default() {
+          return {}
+        }
+      }
+    },
     created() {
-      // this.oneItem = this.itemInfo
-      // console.log(this.oneItem);
+      this.oneItem = this.itemInfo
+      console.log(this.oneItem);
       if (localStorage.getItem('token')) {
         let token = JSON.parse(localStorage.getItem('token'))
         console.log(token.id);
         getOneUser(token.id).then(res => {
           this.oneUser = res.data
-          this.cartList = res.data.cartList
+          // console.log(res.data);
+          console.log(this.oneUser);
         })
       }
-
     },
     methods: {
-      // ...mapActions(['addCart']),
-
       //是否选中
       checkClick() {
-        // for (let i =0;i<this.oneUser.cartList.length; i++) {
-        //   this.oneUser.cartList[i] = !this.oneUser.cartList[i]
-        // }
         this.oneItem.checked = !this.oneItem.checked
-        // console.log(this.oneItem);
+        console.log(this.oneItem);
       },
       //减一
-      reduce(index) {
-        if (this.oneUser.cartList[index].num > 1) {
-          this.oneUser.cartList[index].Subtotal = (this.oneUser.cartList[index].Subtotal / this.oneUser.cartList[index].num)
-          this.oneUser.cartList[index].num --
+      reduce() {
+        // if (this.oneItem.num > 1) {
+        //   this.oneItem.Subtotal = (this.oneItem.Subtotal / this.oneItem.num)
+        //   this.oneItem.num&#45;&#45;
           console.log('减一');
-          // this.$emit('reduce')
+          this.$emit('reduce', this.oneItem)
           // this.oneItem =  this.itemInfo
-          this.oneItem = this.oneUser.cartList[index]
           console.log(this.oneItem);
-          this.click = 1
-
-          for (let i=0; i<this.oneUser.cartList.length; i++) {
-            //如果商品列表的id跟目前修改的商品id相等
-            if (this.oneItem.id === this.oneUser.cartList[i].id) {
-              //将当前修改的商品替换到用户的购物车列表中
-              this.oneUser.cartList.splice(i, 1, this.oneItem)
-            }
-          }
-          // 将操作同步到服务器
-          putUser(this.oneUser.id, this.oneUser).then(res => {
-            console.log('同步更改数据', res.data.cartList);
-          })
-        }
+        // }
       },
       //加1
-      add(index) {
-        this.oneUser.cartList[index].num += 1
-        this.oneUser.cartList[index].Subtotal = (this.oneUser.cartList[index].num * this.oneUser.cartList[index].Subtotal)
-        // this.oneItem =  this.itemInfo
-        this.oneItem = this.oneUser.cartList[index]
+      add() {
+        // this.oneItem.num += 1
+        // this.oneItem.Subtotal = (this.oneItem.num * this.oneItem.Subtotal)
+        this.$emit('reduce', this.oneItem)
         console.log(this.oneItem);
-        // console.log( this.oneItem.Subtotal);
-        this.click = 1
-
-        for (let i=0; i<this.oneUser.cartList.length; i++) {
-          //如果商品列表的id跟目前修改的商品id相等
-          if (this.oneItem.id === this.oneUser.cartList[i].id) {
-            //将当前修改的商品替换到用户的购物车列表中
-            this.oneUser.cartList.splice(i, 1, this.oneItem)
-          }
-        }
-        // 将操作同步到服务器
-        putUser(this.oneUser.id, this.oneUser).then(res => {
-          console.log('同步更改数据', res.data.cartList);
-        })
-
       },
-     /* del() {
-        let arr = []
-        arr = this.oneUser.cartList.filter(item => item.checked == false)
-        this.oneUser.cartList = arr
-        // console.log(this.oneUser.cartList);
-        putUser(this.oneUser.id, this.oneUser).then(res => {
-          console.log("删除数据成功,cartList剩下",res.data.cartList);
-        })
-      },*/
+      /* del() {
+				 let arr = []
+				 arr = this.oneUser.cartList.filter(item => item.checked == false)
+				 this.oneUser.cartList = arr
+				 // console.log(this.oneUser.cartList);
+				 putUser(this.oneUser.id, this.oneUser).then(res => {
+					 console.log("删除数据成功,cartList剩下",res.data.cartList);
+				 })
+			 },*/
     },
     mounted() {
       /*this.del = () => {
@@ -141,62 +176,34 @@
         putUser(this.oneUser.id, this.oneUser).then(res => {
           console.log("删除数据成功,cartList剩下",res.data.cartList);
         })
-        this.click = 2
-        // this.oneItem = this.oneUser.cartList
       }
       this.$bus.$on('del', this.del)*/
-      console.log('asjfsaipokjf', this.click);
-
-      let that = this
-      this.$bus.$on('del', d => {
-        console.log(d);
-        that.click = d
-        console.log(that.click);
-        getOneUser(this.oneUser.id)
-          .then(res => {
-            if (res.status == 200) {
-              this.oneUser = res.data
-              this.oneItem = this.oneUser.cartList
-              console.log(this.oneItem);
-            }
-        })
-      })
-      this.click = that.click
-      console.log('asjfsaipokjf', this.click);
     },
     updated() {
-      if (this.click === 1) {
-        for (let i=0; i<this.oneUser.cartList.length; i++) {
+      for (let i=0; i<this.oneUser.cartList.length; i++) {
+        //如果商品列表的id跟目前修改的商品id相等
+        if (this.itemInfo.id === this.oneUser.cartList[i].id) {
+          //将当前修改的商品替换到用户的购物车列表中
+          this.oneUser.cartList.splice(i, 1, this.oneItem)
+        }
+      }
+      // 将操作同步到服务器
+      putUser(this.oneUser.id, this.oneUser).then(res => {
+        console.log('同步更改数据', res.data.cartList);
+      })
+      getOneUser(this.oneUser.id).then(res => {
+        for (let i=0; i<res.data.cartList.length; i++) {
           //如果商品列表的id跟目前修改的商品id相等
-          if (this.oneItem.id === this.oneUser.cartList[i].id) {
+          if (this.itemInfo.id === res.data.cartList[i].id) {
             //将当前修改的商品替换到用户的购物车列表中
-            this.oneUser.cartList.splice(i, 1, this.oneItem)
+            this.itemInfo = res.data.cartList[i]
           }
         }
-        // 将操作同步到服务器
-        putUser(this.oneUser.id, this.oneUser).then(res => {
-          console.log('同步更改数据', res.data.cartList);
-        })
-      }
-      // console.log(this.click);
+      })
 
-      if (this.click === 2) {
-        getOneUser(this.oneUser.id)
-          .then(res => {
-            if (res.status == 200) {
-              this.oneUser = res.data
-              this.oneItem = this.oneUser.cartList
-              // console.log(this.oneItem);
-            }
-          })
-      }
-  //2.将商品加到购物车（先将商品保存到vuex中）
-  // this.$store.cartList.push(product) //此法不建议，应该通过mutations修改
-  //   this.$store.commit('addCart', this.itemInfo); //此方法不能很好的跟踪添加方法的变化
-
+    }
   }
-}
-</script>
+</script>-->
 
 <style scoped lang="less">
   #shop-item {

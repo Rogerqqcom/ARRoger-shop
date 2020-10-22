@@ -144,19 +144,22 @@
       ...mapActions(['addCart']),
       addToCart() {
         if (localStorage.getItem('token')) {
-          this.oneUser = JSON.parse(localStorage.getItem('token'))
-					getOneUser(this.oneUser.id).then(res => {
+          let token = JSON.parse(localStorage.getItem('token'))
+					getOneUser(token.id).then(res => {
+					  this.oneUser = res.data
             // 1.获取购物车需要展示的信息
             let cartProduct = this.cartProduct
             cartProduct.image = this.topImages[0]
             cartProduct.title = this.product[0].title
             cartProduct.desc = this.product[0].titleTwo
             cartProduct.Subtotal = this.product[0].price
+            cartProduct.price = this.product[0].price
             cartProduct.productId = this.productId;
             cartProduct.checked = true
-            cartProduct.num = 1
+            cartProduct.count = 1
             if (this.oneUser.cartList.length > 0) {
-              cartProduct.id = this.oneUser.cartList[this.oneUser.cartList.length - 1].id + 1
+              // cartProduct.id = this.oneUser.cartList[this.oneUser.cartList.length - 1].id + 1
+              cartProduct.id = this.oneUser.cartList.length + 1
             }else {
               cartProduct.id = 1
 						}
@@ -166,13 +169,40 @@
               this.oneUser = res.data
               // 判断是否存在目前浏览的商品,不相等就添加
               let productId = this.oneUser.cartList.filter(item => item.productId == this.product[0].id)
+              console.log(productId);
               if ( productId.length > 0) {
-                this.$store.state.title = '购物车已有该商品'
+                this.$store.state.title = '当前商品数量+！'
+								//让该商品的数量+1
+                productId[0].count += 1
+                for (let i=0; i<this.oneUser.cartList.length; i++) {
+								  if (productId[0].id == this.oneUser.cartList[i].id) {
+								    //让该商品的单价乘以变化后的数量
+                    productId[0].Subtotal = this.product[0].price * productId[0].count
+                    productId[0].checked = true
+								    this.oneUser.cartList[i] = productId[0]
+									}
+								}
+
+                // 同步数据到服务器
+                putUser(this.oneUser.id, this.oneUser).then(res => {
+                  if (res.status === 200) {
+                    // localStorage.setItem('token', JSON.stringify(this.oneUser))
+                    console.log('加入成功 !');
+                    this.$store.state.title = '1111111加入成功 !'
+                    this.Toast = true
+                    let _this = this
+                    setTimeout(function () {
+                      _this.Toast = false
+                      _this.$router.push('/cart')
+                    }, 1000)
+                  }
+
+                })
                 this.Toast = true
                 setTimeout(() => {
                   this.Toast = false
                   // this.$router.push('/cart')
-                },1600)
+                },1200)
 
 /*
               	this.oneUser.cartList.push(this.product)

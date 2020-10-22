@@ -1,13 +1,48 @@
+<!--<template>
+	<div class="cart-list">
+		<scroll class="content" ref="scroll" >
+			<cart-list-item ref="cartListItem" v-for="(item,index) in cartList"
+											:item-info="item" :key="index" @reduce="reduce" @add="add"/>
+		</scroll>
+	</div>
+</template>-->
 <template>
 	<div class="cart-list">
-    <scroll class="content" ref="scroll" >
-      <cart-list-item  ref="cartListItem" v-for="(item,index) in cartList"
-                      :item-info="item" :key="index" @reduce="reduce" @add="add"/>
-    </scroll>
-  </div>
+		<scroll class="content" ref="scroll" >
+			<cart-list-item ref="cartListItem" v-for="(item,index) in cartList"
+											:item-info="item" :key="index"/>
+		</scroll>
+	</div>
 </template>
 
 <script>
+  import Scroll from "components/content/scroll/Scroll";
+
+  import CartListItem from "./CartListItem";
+  import {mapGetters} from 'vuex'
+  export default {
+
+    name: "CartList",
+		// data() {
+    //   return {
+    //     cartList:[]
+		// 	}
+		// },
+    components: {
+      Scroll,
+      CartListItem
+    },
+    computed: {
+      ...mapGetters(['cartList'])
+    },
+    activated() {
+      if(this.cartList.length !== 0) {
+        this.$refs.scroll.refresh()
+      }
+    }
+  }
+</script>
+<!--<script>
   import Scroll from "components/content/scroll/Scroll";
 
   import CartListItem from "./CartListItem";
@@ -17,22 +52,20 @@
     name: "CartList",
 		data() {
       return {
-        cartList: [],
-        click: 0,
         oneUser: {},
-        oneItem: {}
+        cartList: [],
+				newItem: []
 			}
 		},
     components: {
       Scroll,
       CartListItem
     },
-/*		props: {
-      cartList: Array,
-      oneUser: Object
-		},*/
+		// props: {
+    //   cartList: Array,
+		// },
     created() {
-      // this.oneItem = this.itemInfo
+      // this.oneItem = this.cartList
       // console.log(this.oneItem);
       if (localStorage.getItem('token')) {
         let token = JSON.parse(localStorage.getItem('token'))
@@ -45,62 +78,64 @@
       }
     },
 		methods: {
-      reduce() {
-        this.oneItem = this.$refs.cartListItem.oneItem
-        console.log(this.oneItem);
-        if (this.oneItem.num > 1) {
-          this.oneItem.Subtotal = (this.oneItem.Subtotal / this.oneItem.num)
-          this.oneItem.num--
-          console.log('减一');
-          this.$emit('reduce')
-          // this.oneItem =  this.itemInfo
-          console.log(this.oneItem);
-          this.click = 1
+      reduce(payload) {
+        this.newItem = payload
+        for (let i=0; i<this.oneUser.cartList.length; i++) {
+          if (this.oneUser.cartList[i].id === payload.id){
+            this.oneUser.cartList[i] = payload
+            console.log(this.oneUser.cartList[i]);
+            if (this.oneUser.cartList[i].num > 1) {
+              this.oneUser.cartList[i].Subtotal = (this.oneUser.cartList[i].Subtotal / this.oneUser.cartList[i].num)
+              this.oneUser.cartList[i].num&#45;&#45;
+            }
+					}
         }
-			},
-			add() {
-        this.oneItem = this.$refs.cartListItem.oneItem
-        console.log(this.oneItem);
-        this.oneItem.num += 1
-        this.oneItem.Subtotal = (this.oneItem.num * this.oneItem.Subtotal)
-        // this.oneItem =  this.itemInfo
-        console.log(this.oneItem);
-        console.log( this.oneItem.Subtotal);
-        this.click = 1
+      },
+			add(payload) {
+        this.newItem = payload
+        for (let i=0; i<this.oneUser.cartList.length; i++) {
+          if (this.oneUser.cartList[i].id === payload.id) {
+            this.oneUser.cartList[i] = payload
+            this.oneUser.cartList[i].num += 1
+            this.oneUser.cartList[i].Subtotal = this.oneUser.cartList[i].num * this.oneUser.cartList[i].Subtotal
+          }
+				}
 			}
 		},
-		mounted() {
+    mounted() {
       // this.$nextTick(() => {
       //   console.log(this.$refs.cartListItem.oneItem);
 			//
       // })
       // console.log(this.oneItem);
-      // let that = this
-      // this.$bus.$on('del', d => {
-      //   console.log(d);
-      //   that.click = d
-      //   console.log(that.click);
-			//
-      //   let arr = []
-      //   arr = this.oneUser.cartList.filter(item => item.checked == false)
-      //   this.oneUser.cartList = arr
-      //   // console.log(this.oneUser.cartList);
-      //   putUser(this.oneUser.id, this.oneUser).then(res => {
-      //     console.log("删除数据成功,cartList剩下",res.data.cartList);
-      //     this.cartList = res.data.cartList
-      //   })
-			//
-      //   // getOneUser(this.oneUser.id)
-      //   //   .then(res => {
-      //   //     if (res.status == 200) {
-      //   //       this.oneUser =res.data
-      //   //       this.cartList = this.oneUser.cartList
-      //   //       console.log(this.cartList);
-      //   //     }
-      //   //   })
-      // })
-      // this.click = that.click
-      // console.log('asjfsaipokjf', this.click);
+      /*let that = this
+      this.$bus.$on('del', d => {
+        // console.log(d);
+        that.click = d
+        console.log(that.click);
+
+        let arr = []
+        arr = this.oneUser.cartList.filter(item => item.checked == false)
+        this.oneUser.cartList = arr
+        // console.log(this.oneUser.cartList);
+        putUser(this.oneUser.id, this.oneUser).then(res => {
+          console.log("删除数据成功,cartList剩下", res.data.cartList);
+          this.oneItem = res.data.cartList
+        })
+          console.log('asjfsaipokjf', this.click);
+      })
+*/
+        //   // getOneUser(this.oneUser.id)
+        //   //   .then(res => {
+        //   //     if (res.status == 200) {
+        //   //       this.oneUser =res.data
+        //   //       this.cartList = this.oneUser.cartList
+        //   //       console.log(this.cartList);
+        //   //     }
+        //   //   })
+        // })
+        // this.click = that.click
+
     },
 /*		watch: {
       cartList() {
@@ -122,7 +157,7 @@
           })
       }
     },*/
-		updated() {
+/*		updated() {
       if (this.click === 1) {
         for (let i=0; i<this.oneUser.cartList.length; i++) {
           //如果商品列表的id跟目前修改的商品id相等
@@ -136,15 +171,39 @@
           console.log('同步更改数据', res.data.cartList);
         })
       }
-		},
+		},*/
+		updated() {
+      for (let i=0; i<this.oneUser.cartList.length; i++) {
+        //如果商品列表的id跟目前修改的商品id相等
+        if (this.newItem.id === this.oneUser.cartList[i].id) {
+          //将当前修改的商品替换到用户的购物车列表中
+          this.oneUser.cartList.splice(i, 1, this.newItem)
+        }
+      }
+      // 将操作同步到服务器
+      putUser(this.oneUser.id, this.oneUser).then(res => {
+        console.log('同步更改数据', res.data.cartList);
+      })
+      getOneUser(this.oneUser.id).then(res => {
+        for (let i=0; i<res.data.cartList.length; i++) {
+          //如果商品列表的id跟目前修改的商品id相等
+          if (this.newItem.id === res.data.cartList[i].id) {
+            //将当前修改的商品替换到用户的购物车列表中
+            this.cartList[i] = res.data.cartList[i]
+          }
+        }
+      })
+    },
+
     activated() {
       //如果购物车列表的长度不等于0, 调用refresh重新计算高度
       if(this.cartList.length !== 0) {
         this.$refs.scroll.refresh()
       }
-    }
+    },
+
   }
-</script>
+</script>-->
 
 <style scoped>
   .cart-list {

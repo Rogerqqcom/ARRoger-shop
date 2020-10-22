@@ -17,6 +17,7 @@ const WaitRec = () => import('../views/order/WaitRec')
 const Address = () => import('../views/profile/childComps/address/Address')
 const AddAddress = () => import('../views/profile/childComps/address/AddAddress')
 const EditAddress = () => import('../views/profile/childComps/address/EditAddress')
+const Settlement =() => import('../views/settlement/Settlement')
 
 
 
@@ -109,6 +110,11 @@ const routes = [
     path: '/editAddress',
     name: '修改地址',
     component: EditAddress
+  },
+  {
+    path: '/settlement',
+    name: '修改地址',
+    component: Settlement
   }
 ]
 const router = new Router({
