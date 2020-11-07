@@ -29,7 +29,7 @@
 		height: 1.6rem;
 		background-color: #fff;
 		border-top: 1px solid #eee;
-		border-bottom: 1px solid #eee;
+		border-bottom: 3px solid #eeeeee;
 		display: flex;
 		justify-content: space-around;
 		align-items: center;
@@ -44,7 +44,7 @@
 			.title {
 				display: block;
 				height: 0.4rem;
-				display: flex;
+				/*display: flex;*/
 				align-items: center;
 				margin-top: 0.1rem;
 

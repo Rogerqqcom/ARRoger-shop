@@ -1,5 +1,5 @@
 <template>
-	<div class="bg">
+	<div class="pay-bg">
 		<!--    //顶部导航-->
 		<nav-bar class="nav">
 			<div slot="left" class="left" @click="back">
@@ -21,18 +21,18 @@
 		<!--支付方式-->
 <!--		<pay-method :mode="mode"/>-->
 		<div class="pay-method">
-			<div class="wx" @click="mode = '1'">
+			<div class="wx" @click="mode = '微信'">
 			<span>
 				<img src="~assets/img/settlement/wx.png" alt="">微信支付
 			</span>
-				<img src="~assets/img/settlement/Correct.png" alt="" class="icon-Correct" v-if="mode=='1'">
+				<img src="~assets/img/settlement/Correct.png" alt="" class="icon-Correct" v-if="mode=='微信'">
 			</div>
-			<div class="alipay" @click="mode = '2'">
+			<div class="alipay" @click="mode = '支付宝'">
 			<span>
 				<img src="~assets/img/settlement/alipay.png" alt="">
 				支付宝
 			</span>
-				<img src="~assets/img/settlement/Correct.png" alt="" class="icon-Correct" v-if="mode=='2'">
+				<img src="~assets/img/settlement/Correct.png" alt="" class="icon-Correct" v-if="mode=='支付宝'">
 			</div>
 		</div>
 
@@ -56,6 +56,9 @@
 	import PayNow from "./childComps/PayNow";
 
 	import {getOneUser, putUser} from "../../network/user";
+  import {getProduct, putProduct} from "../../network/products";
+  import {getOrder, postOrder, putOrder} from "../../network/order";
+  import {deleteCartList, getCartList} from "../../network/cartList";
 
   export default {
     name: "Settlement",
@@ -69,9 +72,13 @@
         // 地址
         address: {},
         // 支付方式
-        mode: '1',
+        mode: '微信',
         Toast: false,
-				minToast: false
+				minToast: false,
+				//监听支付按钮是否点击
+				isPay: false,
+				//点击立即购买的商品
+        payProduct: []
 			}
 		},
 		components: {
@@ -84,11 +91,15 @@
       minToast
 		},
 		created() {
+      console.log('settlement created');
       if (this.$store.state.commodity.sum) {
         //先获取到需要结算的订单
         this.commodity = this.$store.state.commodity
-        let token = JSON.parse(localStorage.getItem('token'))
-				getOneUser(token.id).then(res => {
+        console.log(this.commodity);
+        // let token = JSON.parse(localStorage.getItem('token'))
+        let token = this.$store.state.token || JSON.parse(localStorage.getItem('token'))
+
+        getOneUser(token.id).then(res => {
           if (res.status === 200) {
             this.isLogin = true
             this.user = res.data
@@ -100,12 +111,25 @@
             }
           }
 				})
+
+        //根据此商品id请求对应的商品数据
+        //1.先获取到商品id
+        let arr = []
+        for (let i=0; i<this.commodity.arr.length; i++){
+          arr.push(this.commodity.arr[i].productId)
+        }
+        for (let i=0; i<arr.length;i++){
+          getProduct(this.commodity.arr[i].productId).then(res => {
+            this.payProduct.push(res.data)
+            console.log(this.payProduct);
+          })
+				}
+
       }
 		},
+
     methods: {
-      back() {
-        this.$router.back()
-      },
+
       toSetUp() {
         this.$router.push('/setUp')
       },
@@ -115,51 +139,100 @@
 			//立即支付事件
       sub() {
         console.log('paynow');
-        if (this.user.Order.length > 0) {
-          var myDate = new Date();
-          let Order = {
-            commodity: this.commodity,
-            address: this.address,
-            mode: this.mode,
-            created_order:myDate.getFullYear() + '/' + myDate.getMonth() +'/' + myDate.getDate() + '/' + myDate.getHours() + ':' + myDate.getMinutes(),
-            id: this.user.Order[0].id + 1
-          }
-          //在数组前面添加
-          this.user.Order.unshift(Order)
+        //如果点击了“立即支付”按钮，isPay改为true
+				this.isPay = true
 
-          //清除购物车列表为选中的状态的商品
-          this.user.cartList = this.user.cartList.filter(item => item.checked == false)
-					putUser(this.user.id, this.user).then(res => {
-					  if (res.status === 200) {
-					    this.$store.state.title = '正在支付'
-							this.Toast = true
-							setTimeout(() => {
-							  this.Toast = false
-                this.$store.state.title = '支付成功'
-								this.minToast = true
-								setTimeout(()=> {
-								  this.minToast = false
-									this.$router.push('/cart')
-								},1000)
-              },1000)
-						}
-					})
+        //如果结算的商品中有flag，说明为点击“立即购买”后的商品
+        if (this.$store.state.commodity.flag && !this.$route.query.id) {
+          if (!this.address.name) {
+            alert('请先选择地址！')
+          }else {
+            var myDate = new Date();
+            let Order = {
+              "commodity": this.commodity,
+              "address": this.address,
+              // 支付方式
+              "mode": this.mode,
+              //支付与否
+              "is_pay": "待收货",
+              "created_order":myDate.getFullYear() + '/' + myDate.getMonth() +'/' + myDate.getDate() + '/' + myDate.getHours() + ':' + myDate.getMinutes(),
+							"userId": this.user.id
+            }
+            //将新的订单提交到用户订单列表栏
+            // this.user.Order.push(Order)
+						postOrder(Order).then(res => {
+              if (res.status == 201) {
+									this.$store.state.title = '正在支付'
+									this.Toast = true
+									setTimeout(() => {
+										this.Toast = false
+										this.$store.state.title = '支付成功, 不清除cartList'
+										this.minToast = true
+										setTimeout(()=> {
+											this.minToast = false
+											this.$router.push('/')
+										},1000)
+									},1000)
+              	}
+            })
+            //商品销量+1，商品数量-1 （11/4）
+            this.payProduct[0].[0].sale += 1
+            this.payProduct[0].[0].totalNum -=1
+            console.log(this.payProduct[0].[0]);
+            let obj = this.payProduct[0].[0]
 
-        }else {
-          var myDateTwo = new Date();
-          let Order = {
-            commodity: this.commodity,
-            address: this.address,
-            mode: this.mode,
-            created_order:myDateTwo.toLocaleDateString() + '/' + myDateTwo.getHours() + ':' + myDateTwo.getMinutes(),
-            id: 1
-          }
-          this.user.Order.push(Order)
-					//清除购物车列表为选中的状态的商品
-          this.user.cartList = this.user.cartList.filter(item => item.checked == false)
-          putUser(this.user.id, this.user).then(res => {
-            if (res.status == 200) {
-              if (res.status === 200) {
+						putProduct(this.commodity.arr[0].productId, obj).then(res => {
+							console.log("库存减一，销量加1",res.data);
+						})
+					}
+				}
+        //在购物车直接点去结算的商品
+        else if (!this.$route.query.id) {
+          if (!this.address.name) {
+            alert('请先选择地址！')
+          } else {
+            var myDate = new Date();
+            let Order = {
+              "commodity": this.commodity,
+              "address": this.address,
+              // 支付方式
+              "mode": this.mode,
+              //支付与否
+              "is_pay": "待收货",
+              "created_order":myDate.getFullYear() + '/' + myDate.getMonth() +'/' + myDate.getDate() + '/' + myDate.getHours() + ':' + myDate.getMinutes(),
+              "userId": this.user.id
+            }
+
+            //清除当前用户购物车列表为选中的状态的商品
+						getCartList().then(res => {
+              let arr = res.data.filter(item => item.checked == true && item.userId == this.user.id)
+              console.log(arr);
+              for(let i=0;i<arr.length;i++) {
+                console.log(arr[i].id);
+                deleteCartList(arr[i].id).then(res => {
+                  console.log('删除订单成功',res.data);
+                })
+              }
+            })
+
+
+            //遍历所有结算的商品，让对应的商品销量加1，库存减一 （11/4）
+            for (let i = 0; i < this.payProduct.length; i++) {
+              this.payProduct[i].[0].sale += 1
+              this.payProduct[i].[0].totalNum -= 1
+            }
+            // console.log(this.payProduct);
+            for (let i = 0; i < this.payProduct.length; i++) {
+              //如果商品有多个，则提交修改的商品的销量和库存
+              if (this.payProduct[i].[0].id == this.commodity.arr[i].productId) {
+                putProduct(this.commodity.arr[i].productId, this.payProduct[i].[0]).then(res => {
+                  console.log("库存减一，销量加1", res.data);
+                })
+              }
+            }
+						//提交订单
+            postOrder(Order).then(res => {
+              if (res.status == 201) {
                 this.$store.state.title = '正在支付'
                 this.Toast = true
                 setTimeout(() => {
@@ -168,19 +241,101 @@
                   this.minToast = true
                   setTimeout(()=> {
                     this.minToast = false
-                    this.$router.push('/cart')
+                    this.$router.push('/')
                   },1000)
                 },1000)
               }
+            })
+
+          }
+        }
+        //在订单-待付款 点进来的，
+        if (this.$route.query.id) {
+          if (!this.address.name) {
+            alert('请先选择地址！')
+          } else {
+            var myDate = new Date();
+            let Order = {
+              "commodity": this.commodity,
+              "address": this.address,
+              "mode": this.mode,
+              //支付与否
+              "is_pay": "待收货",
+              "created_order": myDate.getFullYear() + '/' + myDate.getMonth() + '/' + myDate.getDate() + ' ' + myDate.getHours() + ':' + myDate.getMinutes(),
+              "userId": this.user.id
+              // id: this.user.Order[this.$route.query.id - 1].id
             }
-					})
+            //如果查找到该订单，就替换新的内容
+            getOrder(this.$route.query.id).then(res => {
+              console.log(res.data);
+              let newOrder = res.data.find(item => item.userId == this.user.id && item.id == this.$route.query.id)
+              console.log(newOrder);
+              putOrder(newOrder.id,Order).then(res => {
+                console.log('修改订单状态成功，支付成功',res.data);
+                this.$router.back()
+              })
+            })
+          }
+        }
+      },
+			//如果未点击立即支付按钮，点击了返回按钮同时又不是在待付款点进来（this.$route.query.id）的话，
+			// 就让订单支付状态为 未支付
+      back() {
+        if (!this.isPay && !this.$route.query.id) {
+          // if (this.user.Order.length > 0) {
+            if (!this.address.name) {
+              alert('请先选择地址！')
+            } else {
+              var myDateTwo = new Date();
+              let Order = {
+                "commodity": this.commodity,
+                "address": this.address,
+                "mode": this.mode,
+                //支付与否
+                "is_pay": "未支付",
+                "created_order": myDateTwo.toLocaleDateString() + ' ' + myDateTwo.getHours() + ':' + myDateTwo.getMinutes(),
+                "userId": this.user.id
+                // id: this.user.Order.length ? this.user.Order[this.user.Order.length - 1].id + 1 : 1
+              }
+              // this.user.Order.push(Order)
+              //清除购物车列表为选中的状态的商品
+              getCartList().then(res => {
+                if (res.status == 200) {
+                  let arr = res.data.filter(item => item.checked == true && item.userId == this.user.id)
+                  for(let i=0;i<arr.length;i++) {
+                    deleteCartList(arr[i].id).then(res => {
+                      console.log('删除订单成功',res.data);
+                    })
+                  }
+								}
+              })
+              postOrder(Order).then(res => {
+                if (res.status == 201) {
+                  this.$store.state.title = '待付款'
+									this.minToast = true
+									setTimeout(() => {
+										this.minToast = false
+										this.$router.push('/cart')
+										// this.$router.back()
+									}, 1000)
+                }
+              })
+
+            }
 				}
-      }
+        //如果路由携带参数的话，就让它返回到待付款界面
+        if (this.$route.query.id) {
+          this.$router.back()
+				}
+      },
     }
   }
 </script>
 
 <style scoped lang="less">
+	.pay-bg {
+		overflow: hidden;
+	}
 	/*顶部*/
 	.nav {
 		background-color: #58a7db;

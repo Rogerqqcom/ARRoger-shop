@@ -8,7 +8,7 @@
 		</div>
 		<div class="info">
 			<div class="name">昵称：{{userData.name || "null"}}</div>
-			<div class="address">地址：{{address || "null"}}</div>
+			<div class="address">地址：{{userData.address || "null"}}</div>
 		</div>
 	</div>
 </template>
@@ -16,13 +16,15 @@
 <script>
   export default {
     name: "MyInfo",
-		props: {
-      userData: {
-        // type: Object
-      },
-			address: ''
+		data() {
+      return {
+        // userData: {}
+			}
 		},
-		methods: {
+		props: {
+      userData: {},
+		},
+    methods: {
       toLogin() {
         this.$router.push('/login')
       }
@@ -32,7 +34,7 @@
 
 <style scoped lang="less">
 	.user-info {
-		background-color: #e1e1e1;
+		background-color: #f0f0f0;
 		display: inline-block;
 		width: 100%;
 		height: 3rem;
@@ -60,7 +62,7 @@
 				/*width: 100%;*/
 				/*height: 100%;*/
 				font-size: 0.3rem;
-				background-color: rgba(133, 133, 133, 0.8);
+				background-color: rgba(177, 177, 177, 0.8);
 				color: #f5f5f5;
 				line-height: 1.8rem;
 				text-align: center;

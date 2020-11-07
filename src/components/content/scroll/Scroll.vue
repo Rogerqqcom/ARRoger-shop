@@ -103,7 +103,7 @@
         //使用this.scroll && 先判断是否scroll组件挂载完成，再调用this.scroll.refresh()
         this.scroll && this.scroll.refresh && this.scroll.refresh()
         // console.log('refresh');
-        console.log('refresh重新计算内容高度次数');
+        // console.log('refresh重新计算内容高度次数');
       },
       finishPullUp() {
         //等数据请求完成，并且将新的数据展示出来后, .finishPullUp()进行下一次的上拉加载

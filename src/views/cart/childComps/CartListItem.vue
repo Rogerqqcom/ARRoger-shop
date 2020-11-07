@@ -1,4 +1,5 @@
-<!--<template>
+<!--
+&lt;!&ndash;<template>
   <div id="shop-item">
     <div class="item-selector">
       &lt;!&ndash;      <CheckButton @checkBtnClick="checkedChange" v-model="itemInfo.checked"></CheckButton>&ndash;&gt;
@@ -20,11 +21,11 @@
       </div>
     </div>
   </div>
-</template>-->
+</template>&ndash;&gt;
 <template>
   <div id="shop-item">
     <div class="item-selector">
-      <!--      <CheckButton @checkBtnClick="checkedChange" v-model="itemInfo.checked"></CheckButton>-->
+      &lt;!&ndash;      <CheckButton @checkBtnClick="checkedChange" v-model="itemInfo.checked"></CheckButton>&ndash;&gt;
       <CheckButton :is-checked="itemInfo.checked" @click.native="checkClick"/>
     </div>
     <div class="item-img">
@@ -84,7 +85,7 @@
         // }
       },
       reduce() {
-        console.log('----------1');
+        console.log('&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;1');
       },
       add() {
         console.log('++++++++++++++1');
@@ -95,7 +96,7 @@
     }
   }
 </script>
-<!--<script>
+&lt;!&ndash;<script>
   import CheckButton from "components/content/checkButton/CheckButton";
 
   import {getOneUser, putUser} from "../../../network/user";
@@ -203,7 +204,7 @@
 
     }
   }
-</script>-->
+</script>&ndash;&gt;
 
 <style scoped lang="less">
   #shop-item {
@@ -288,3 +289,4 @@
 
 
 </style>
+-->

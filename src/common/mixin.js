@@ -24,7 +24,9 @@ export const itemListenerMixin = {
     // 之后在调用非常频繁的时候, 就使用新生成的函数.
     this.refresh = debounce(this.$refs.scroll.refresh, 100)
     this.itemImgListener = () => {
+      //不使用防抖操作
       // this.$refs.scroll.refresh()
+      // 使用防抖操作
       this.refresh()
     }
     this.$bus.$on('itemImageLoad', this.itemImgListener)
@@ -46,7 +48,7 @@ export const backTopMixin = {
       this.$refs.scroll.scrollTo(0, 0)
     },
     listenShowBackTop(position) {
-      this.isShowBackTop = (-position.y) > 1000
+      this.isShowBackTop = (-position.y) > 600
     }
   }
 }

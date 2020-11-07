@@ -16,3 +16,10 @@ export function getProduct(id) {
     }
   })
 }
+export function putProduct(productId, data) {
+  return request({
+    method: 'put',
+    url: './products/'+productId,
+    data
+  })
+}

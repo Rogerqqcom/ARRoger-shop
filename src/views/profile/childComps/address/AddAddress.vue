@@ -76,7 +76,9 @@
 		},
 		created() {
       //获取当前的登录的用户
-			let token = JSON.parse(localStorage.getItem('token'))
+			// let token = JSON.parse(localStorage.getItem('token'))
+      let token = this.$store.state.token || JSON.parse(localStorage.getItem('token'))
+
 			//根据当前登录用户id获取当前的用户信息
       getOneUser(token.id)
 			.then(res => {
@@ -99,8 +101,8 @@
 				}
 			},
       back() {
-        this.$router.go(-1)
-			},
+        this.$router.push('/setUp')
+      },
 			/*提交地址信息*/
       submitAddr() {
         let addr = this.addressInfo

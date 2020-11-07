@@ -176,9 +176,9 @@
     color: white;
 		position: relative;
     span:nth-child(1) {
-      background-color:  #58a7db;
+      /*background-color:  #58a7db;*/
       width: 1.5rem;
-      border-radius: 10px;
+      /*border-radius: 50%;*/
       position: absolute;
       bottom: 0.01rem;
       left: 0.2rem;

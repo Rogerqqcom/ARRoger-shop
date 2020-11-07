@@ -49,9 +49,12 @@
 		},
 		methods: {
       updateInfo() {
-        let token = JSON.parse(localStorage.getItem('token'))
+        let token = this.$store.state.token || JSON.parse(localStorage.getItem('token'))
         putUser(token.id, this.user).then(res => {
           if (res.status === 200) {
+            //将vuex里面的用户昵称修改
+           this.$store.state.userData.name = this.user.name
+            // console.log(this.$store.state.userData);
             this.$store.state.title = "修改成功！"
             this.Toast = true
             setTimeout(() => {

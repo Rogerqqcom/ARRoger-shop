@@ -1,6 +1,6 @@
 module.exports = {
-  // publicPath: './',//配置根目录，上传访问目的的时候用到，比如www.sina.com/china/,这个/china/就是要额外配置的，写成publicPath:'/china/'
-  publicPath: '/',//配置根目录，开发时用到
+  publicPath: './',//配置根目录，上传访问目的的时候用到，比如www.sina.com/china/,这个/china/就是要额外配置的，写成publicPath:'/china/'
+  // publicPath: '/',//配置根目录，开发时用到
   assetsDir: 'static', //静态资源目录（js,css,image）
   lintOnSave:false,//是否开启eslint检测,false不开启，有效值：true || false
   productionSourceMap:false,//生成环境下面开启sourceMap支持断点调试

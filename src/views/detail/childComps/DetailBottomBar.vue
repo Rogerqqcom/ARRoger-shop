@@ -3,7 +3,9 @@
     <div class="bar-item bar-left">
       <div>
         <i class="icon service"></i>
-        <span class="text">客服</span>
+<!--        <span class="text">客服</span>-->
+        <a class="text" href="tel:18200892850">客服</a>
+
       </div>
       <div>
         <i class="icon shop"></i>
@@ -35,7 +37,7 @@
         // },500)
       },
       goBuy() {
-        console.log('爱上附加赛哦');
+        this.$emit('goBuy')
 
       }
     }

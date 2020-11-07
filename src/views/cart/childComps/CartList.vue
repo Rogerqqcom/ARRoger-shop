@@ -1,11 +1,12 @@
-<!--<template>
+<!--
+&lt;!&ndash;<template>
 	<div class="cart-list">
 		<scroll class="content" ref="scroll" >
 			<cart-list-item ref="cartListItem" v-for="(item,index) in cartList"
 											:item-info="item" :key="index" @reduce="reduce" @add="add"/>
 		</scroll>
 	</div>
-</template>-->
+</template>&ndash;&gt;
 <template>
 	<div class="cart-list">
 		<scroll class="content" ref="scroll" >
@@ -42,7 +43,7 @@
     }
   }
 </script>
-<!--<script>
+&lt;!&ndash;<script>
   import Scroll from "components/content/scroll/Scroll";
 
   import CartListItem from "./CartListItem";
@@ -203,7 +204,7 @@
     },
 
   }
-</script>-->
+</script>&ndash;&gt;
 
 <style scoped>
   .cart-list {
@@ -216,3 +217,4 @@
 
 	}
 </style>
+-->

@@ -1,6 +1,7 @@
 <template>
 	<div class="goods">
     <goods-list-item v-for="item in goods" :goods-item="item"></goods-list-item>
+<!--		<p v-if="goods.length > 1">没有更多数据啦~</p>-->
   </div>
 </template>
 
@@ -29,8 +30,15 @@
     flex-wrap: wrap;
     justify-content: space-evenly;
 		margin: 0.2rem 0 1rem;
-
+		width: 100%;
 	}
+	/*p {*/
+	/*	text-align: center;*/
+	/*	color: #1296db;*/
+	/*	width: 48%;*/
+	/*	!*border-top: 1px solid #1296db;*!*/
+	/*	!*left: 35% ;*!*/
+	/*}*/
 
 
 </style>

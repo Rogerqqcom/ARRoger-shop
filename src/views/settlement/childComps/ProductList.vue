@@ -1,6 +1,6 @@
 <template>
 	<div class="product-bg">
-		<div class="product" v-for="(item,index) in commodity" :key='index'>
+		<div class="product" v-for="(item,index) in commodity.arr" :key='index'>
 			<img :src="item.image" alt="" class="img">
 			<div class="right-bg">
 				<p>{{item.title}}</p>
@@ -15,7 +15,7 @@
   export default {
     name: "ProductList",
 		props: {
-      commodity: Array
+      commodity: Object
 		}
   }
 </script>

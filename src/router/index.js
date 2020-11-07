@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import AddAddr from "../views/profile/childComps/address/AddAddress";
+// import AddAddr from "../views/profile/childComps/address/AddAddress";
+// import Clothes from "../views/recommend/Clothes";
 
 const Home = () => import('../views/home/Home')
 const Category = () => import('../views/category/Category')
@@ -10,14 +11,14 @@ const Login = () => import('../views/profile/childComps/Login')
 const SetUp = () => import('../views/setUp/SetUp')
 const Register = () => import('../views/profile/childComps/Register')
 const Detail = () => import('../views/detail/Detail')
-const Search = () => import('../views/home/childComps/Search')
-const AllOrder = () => import('../views/order/AllOrder')
-const WaitPay = () => import('../views/order/WaitPay')
-const WaitRec = () => import('../views/order/WaitRec')
+const Search = () => import('../components/content/search/Search')
+const Order = () => import('../views/order/Order')
 const Address = () => import('../views/profile/childComps/address/Address')
 const AddAddress = () => import('../views/profile/childComps/address/AddAddress')
 const EditAddress = () => import('../views/profile/childComps/address/EditAddress')
 const Settlement =() => import('../views/settlement/Settlement')
+const Clothes = () => import('../views/recommend/Clothes')
+const OrderInfo = () => import('../views/order/OrderDetail')
 
 
 
@@ -82,19 +83,14 @@ const routes = [
     component: Search
   },
   {
-    path: '/allOrder',
+    path: '/order',
     name: '全部订单',
-    component: AllOrder
+    component: Order
   },
   {
-    path: '/waitPay',
-    name: '待付款',
-    component: WaitPay
-  },
-  {
-    path: '/waitRec',
-    name: '待收货',
-    component: WaitRec
+    path: '/orderInfo',
+    name: '物流信息',
+    component: OrderInfo
   },
   {
     path: '/address',
@@ -108,17 +104,42 @@ const routes = [
   },
   {
     path: '/editAddress',
-    name: '修改地址',
+    name: '编辑地址',
     component: EditAddress
   },
   {
     path: '/settlement',
     name: '修改地址',
     component: Settlement
+  },
+  {
+    path: '/fruit',
+    name: '水果特卖',
+    component: () => import('../views/recommend/Fruit')
+  },
+  {
+    path: '/clothes',
+    name: '衣服上新',
+    component: Clothes
+  },
+  {
+    path: '/shoes',
+    name: '精品好鞋',
+    component: () => import('../views/recommend/Shoes')
+  },
+  {
+    path: '/phone',
+    name: '爆款手机',
+    component: () => import('../views/recommend/Phone')
+  },
+  {
+    path: '/comment',
+    name: '商品评价',
+    component: () => import('../views/order/OrderComment')
   }
 ]
 const router = new Router({
-  mode: 'history',
+  // mode: 'history',
   routes
 })
 

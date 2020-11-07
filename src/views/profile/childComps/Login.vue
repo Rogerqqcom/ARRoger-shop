@@ -45,7 +45,11 @@
 				},
 				userArr: [],
         minToast: false,
-				loadingToast: false
+				loadingToast: false,
+        userData: {
+          name: '',
+					address: ''
+				}
 			}
 		},
 		components: {
@@ -64,22 +68,34 @@
     methods: {
       onSubmit() {
         // 判断是输入的账号密码是否正确
-        let userName = this.userArr.filter(item => item.userName === this.user.username)
-        let password = this.userArr.filter(item => item.passWord === this.user.password)
+        let userInfo = this.userArr.filter(item => item.userName === this.user.username && item.passWord === this.user.password)
         let that = this
 
-				if (userName.length > 0 && password.length > 0) {
+				if (userInfo.length > 0) {
 				  this.$store.state.title = '登录中...'
 					this.loadingToast = true
           console.log('login success');
           setTimeout(function () {
             //本地存储用户信息
-				    localStorage.setItem('token', JSON.stringify(userName[0]))
-						//将用户信息保存在vuex中，但页面刷新后变成无登录状态
-						that.$store.state.token = userName[0]
+				    // localStorage.setItem('token', JSON.stringify(userInfo[0]))
+						//将用户信息作为token保存在vuex中，但实际不是上token只是用户的一串数字，但页面刷新后变成无登录状态
+						that.$store.state.token = userInfo[0]
 						//跳转前关闭弹窗
 						that.loadingToast = false
-            that.$router.push('/home')
+
+						that.userData.name = userInfo[0].name
+            if (userInfo[0].address.length > 0) {
+              //筛选得到的地址为默认状态的地址
+              let DeAddress = userInfo[0].address.filter(item => item.isDefault == true)
+              //获取到地区进行展示
+              that.userData.address = DeAddress[0].address
+            }else {
+              that.userData.address = 'null'
+            }
+            //将需要展示在个人中心的用户昵称和地址信息保存到vuex
+            that.$store.state.userData = that.userData
+            console.log(that.$store.state.userData);
+            that.$router.push('/profile')
           }, 1000)
 				}else if(this.user.username === '' || this.user.password === ''){
 				  this.$store.state.title = '输入不能有空 ！！'

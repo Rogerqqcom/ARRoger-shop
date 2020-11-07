@@ -12,63 +12,63 @@
       </div>
     </nav-bar>
     <!--用户信息-->
-    <my-info :userData="userData" :address="address"></my-info>
+    <my-info :userData="userData"></my-info>
     <!--订单信息-->
-    <order-info>
-    </order-info>
+    <order-info/>
+    <!--信息列表-->
+    <normal-list-view :list-item="listItem"/>
+<!--    <normal-list-view :list-item="serviceList"/>-->
   </div>
 </template>
 <script>
   import NavBar from "components/common/navbar/NavBar";
 
   import MyInfo from "./childComps/myInfo/MyInfo";
-  import OrderInfo from "../order/OrderInfo";
+  import OrderInfo from "./childComps/OrderItem";
+  import NormalListView from "./childComps/myInfo/NormalListView";
 
   import {getOneUser} from "network/user"
 
   export default {
+    // inject: ['reload'],
     name:'Profile',
     components: {
       NavBar,
       MyInfo,
-      OrderInfo
+      OrderInfo,
+      NormalListView
     },
     data () {
       return {
         isLogin: false,
         //获取到当前用户,作为用户展示的信息
         userData: {
-          name: "",
-          address: ""
+          // name: "",
+          // address: ""
         },
         //筛选得到的地址为默认状态的地址
-        address: ''
-
+        // address: '',
+        //定义一些信息
+        listItem: [
+          {icon: 'message.svg', info: '我的消息'},
+          {icon: 'integral.svg', info: '积分商城'},
+          {icon: 'vip.svg', info: '会员卡'},
+          {icon: 'collect.svg', info: '我的收藏夹'},
+          {icon: 'shopping.svg', info: '下载购物APP  >>'},
+        ],
+    /*    serviceList: [
+          {icon: 'collect.svg', info: '我的收藏夹'},
+          {icon: 'shopping.svg', info: '下载购物APP'},
+        ]*/
       }
     },
     created() {
+      console.log("profile-create");
       //从本地浏览器获取到token信息后，将设置为登录状态
-      if(localStorage.getItem('token')){
+      if(this.$store.state.token || localStorage.getItem('token')){
         this.isLogin = true
-        let token = JSON.parse(localStorage.getItem('token'))
-        // console.log(token);
-        // console.log(token.id);
-        getOneUser(token.id).then(res => {
-          console.log(res.data);
-          if (res.status === 200) {
-            this.userData = res.data
-            if (this.userData.address.length > 0) {
-              //筛选得到的地址为默认状态的地址
-              let DeAddress = this.userData.address.filter(item => item.isDefault == true)
-              //获取到地区进行展示
-              this.address = DeAddress[0].address
-            }else {
-              this.address = 'null'
-            }
-          }
-          // this.userData.name = token.name
-          // this.userData.address = token.address[0].endAddress
-        })
+        //获取需要展示在个人信息页的信息
+        this.userData =  JSON.parse(JSON.stringify(this.$store.state.userData))
       }else {
         this.userData = 'null'
       }
@@ -83,6 +83,15 @@
       toLogin() {
         this.$router.push('/login')
       },
+    },
+    //如果想刷新部分内容要启用activated函数，用法同created，activated只有在被keep-alive包裹时会触发，activated函数一进入页面就触发
+    activated() {
+      // console.log("profile-activated");
+      if (this.$store.state.token) {
+        this.isLogin = true
+        //获取需要展示在个人信息页的信息
+        this.userData =  JSON.parse(JSON.stringify(this.$store.state.userData))
+      }
     }
 
   }

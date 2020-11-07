@@ -53,9 +53,11 @@
 		},
     created() {
       //从本地浏览器获取到token信息后，将设置为登录状态
-      if(localStorage.getItem('token')){
+      if( this.$store.state.token || localStorage.getItem('token')){
         this.isLogin = true
-        let token = JSON.parse(localStorage.getItem('token'))
+        // let token = JSON.parse(localStorage.getItem('token'))
+        let token = this.$store.state.token || JSON.parse(localStorage.getItem('token'))
+
         getOneUser(token.id).then(res => {
           // console.log(res.data);
           if (res.status === 200) {
@@ -110,9 +112,9 @@
           }
 				}
 				//然后将修改后的对象put到服务器
-        let token = JSON.parse(localStorage.getItem('token'))
+        let token = this.$store.state.token || JSON.parse( localStorage.getItem('token'))
         putUser(token.id, this.user).then(res => {
-          // console.log(res.data);
+          console.log(res.data);
         })
       },
 			//根据当前点击跳转到对应的地址信息页

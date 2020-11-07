@@ -75,7 +75,10 @@
       // console.log(addressId);
       if(addressId) {
         //获取当前登录用户的地址
-        let token = JSON.parse(localStorage.getItem('token'))
+        // let token = JSON.parse(localStorage.getItem('token'))
+        let token = this.$store.state.token || JSON.parse(localStorage.getItem('token'))
+
+
         getOneUser(token.id)
           .then(res => {
             if(res.status === 200) {

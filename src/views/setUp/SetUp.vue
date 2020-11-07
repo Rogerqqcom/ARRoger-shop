@@ -72,21 +72,28 @@
       UpdateUser,
 		},
     created() {
-      //获取当前的登录的用户
-      let token = JSON.parse(localStorage.getItem('token'))
-      //根据当前登录用户id获取当前的用户信息
-      getOneUser(token.id)
-        .then(res => {
-          if(res.status === 200) {
-            // console.log(res.data);
-            this.user = res.data
-          }
-        })
+      if (this.$store.state.token || localStorage.getItem('token')) {
+        //获取当前的登录的用户
+        // let token = JSON.parse(localStorage.getItem('token'))
+        let token = this.$store.state.token || JSON.parse(localStorage.getItem('token'))
+        //根据当前登录用户id获取当前的用户信息
+        getOneUser(token.id)
+          .then(res => {
+            if(res.status === 200) {
+              // console.log(res.data);
+              this.user = res.data
+            }
+          })
+			}else {
+        alert('请先登录')
+				this.$router.push('/login')
+			}
     },
 		methods: {
       logout() {
-          this.isAlert = true
-			},
+				this.isAlert = true
+        this.$store.state.token = ''
+      },
       cancelEvent:function(){
         this.isAlert = false;
       },
@@ -116,14 +123,14 @@
         this.$router.push('/login')
       },
       UpdateUser() {
-        if(localStorage.getItem('token')) {
+        if (this.$store.state.token || localStorage.getItem('token')) {
           this.cUser = !this.cUser
 				}else {
           alert('请先登录')
 				}
       },
       UpdateAddress() {
-        if(localStorage.getItem('token')) {
+        if (this.$store.state.token || localStorage.getItem('token')) {
           this.$router.push('/address')
         }else {
           alert('请先登录')

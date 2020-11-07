@@ -113,8 +113,7 @@
 								"name": "未命名",
 								"userName": that.user.username,
 								"passWord": that.user.password,
-                "address": [],
-								"cartList": []
+                "address": []
 							}
 
 							//发送post请求将obj对象信息传到服务器
@@ -125,11 +124,11 @@
 										that.loadingToast = true
 										setTimeout(function () {
 											//本地保存用户信息到token
-											localStorage.setItem('token', JSON.stringify(obj))
-											that.$store.state.token = obj
+											// localStorage.setItem('token', JSON.stringify(obj))
+											// that.$store.state.token = obj
 											//1500ms后跳转到首页后关闭toast
 											that.loadingToast = false
-											that.$router.push('/')
+											that.$router.push('/login')
 										}, 1500)
 								}
 							})

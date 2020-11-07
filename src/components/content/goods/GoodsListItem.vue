@@ -6,13 +6,15 @@
 <!--   支持使用onload事件的标签 <body>, <frame>, <iframe>, <img>, <input type="image">, <link>, <script>, <style>-->
 <!--    图片展示-->
 <!--    <img :src="goodsItem.imgStr[0]" alt="" @load="imageLoad">-->
+    <!--不监听图片加载-->
 <!--    <img v-lazy="showImg"  alt="">-->
+    <!--监听图片加载-->
     <img v-lazy="showImg"  alt="" @load="imageLoad">
 <!--    标题、价格、总量展示-->
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
       <span class="price">￥ {{goodsItem.price}}</span>
-      <span class="totalNUm">{{goodsItem.totalNum}}</span>
+      <span class="totalNUm">销量{{goodsItem.sale}}</span>
     </div>
   </div>
 </template>
@@ -35,7 +37,7 @@
       }
     },
 /*    mounted() {
-      //等页面所有东西挂载完后，发送一次事件进行refresh重新计算高度，但是计算的滚动内容高度不准确
+      //1.等页面所有东西挂载完后，发送一次事件进行refresh重新计算高度，但是计算的滚动内容高度不准确
       window.onload = function () {
         this.imageLoad()
       }

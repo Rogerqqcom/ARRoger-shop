@@ -12,7 +12,7 @@
   export default {
     name: "PayNow",
 		props: {
-      commodity: Array
+      commodity: Object
 		},
 		methods: {
       sub() {

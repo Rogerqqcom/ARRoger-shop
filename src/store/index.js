@@ -17,7 +17,13 @@ export default new Vuex.Store({
     //购物车列表数据
     // cartList: []
     //结算商品数据
-    commodity: []
+    commodity: [],
+    //评价商品的订单数据
+    productComment: [],
+    //订单状态id
+    ordersUri: '',
+    // 保存个人中心页需要展示的用户名和地址
+    userData: ''
 
   },
   mutations: {

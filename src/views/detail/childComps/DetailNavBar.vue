@@ -1,9 +1,8 @@
 <template>
 	<div>
     <nav-bar>
-      <div slot="left" class="back" @click="backClick">
-        <img src="~assets/img/common/back.svg" alt="">
-<!--        <div class="icon"></div>-->
+      <div slot="left" class="detail-back" @click="backClick">
+        <img src="~assets/img/navbar/back.png" alt="">
       </div>
       <div slot="center" class="title">
         商品详情
@@ -28,7 +27,7 @@
       }
     },
     created() {
-      if (localStorage.getItem('token')) {
+      if (this.$store.state.token || localStorage.getItem('token')) {
         this.isLogin = true
       }
     },
@@ -62,7 +61,7 @@
   .active {
     color: #fff;
   }
-  .back {
+  .detail-back {
     img {
       width: 0.65rem;
       height: 0.65rem;

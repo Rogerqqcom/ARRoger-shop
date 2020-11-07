@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import FastClick from 'fastclick'
 
 //1.安装-npm install vue-lazyload
 //2.导入
@@ -16,6 +17,10 @@ Vue.prototype.$bus = new Vue()
 Vue.use(VueLazyload, {
   loading:  require('./assets/img/common/imageLazy.jpg') //导入占位图
 })
+
+//4.解决移动端300ms延迟问题
+FastClick.attach(document.body)
+
 
 /*
 手机app用到的调取图片的
