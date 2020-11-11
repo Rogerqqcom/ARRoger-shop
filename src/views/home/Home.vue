@@ -80,22 +80,22 @@
         recommends: [
           {
             icon: 'fruit.svg',
-            link: '/fruit',
+            link: 'fruit',
             title: '水果特卖'
           },
           {
             icon: 'clothing.svg',
-            link: '/clothes',
-            title: '秋装上新'
+            link: 'clothes',
+            title: '新装上架'
           },
           {
             icon: 'shoes.svg',
-            link: '/shoes',
+            link: 'shoes',
             title: '精品好鞋'
           },
           {
             icon: 'phone.svg',
-            link: '/phone',
+            link: 'phone',
             title: '爆款手机'
           }
         ],
@@ -112,37 +112,14 @@
     },
     created() {
       //从本地浏览器获取到token信息后，将设置为登录状态
-      // console.log(this.$store.state.token);
       if(this.$store.state.token || localStorage.getItem('token')){
-        // this.reload()
-        // console.log(this.$store.state.token);
         this.isLogin = true
       }
-      /*测试vuex存储时的代码
-      * if(this.$store.state.token){
-          console.log(this.$store.state.token);
-          this.isLogin = true
-        }
-      * */
-      //1.请求banner数据
-      // getBanner().then(res => {
-      //   console.log('banners数据请求成功',res.data.banners);
-      //   this.banners = res.data.banners;
-      // })
-      //2.请求商品数据
-      // getProduct().then(res => {
-      //   console.log("商品数据获取成功",res.data);
-      //   this.goods = res.data
-      // })
+
       //请求首页默认展示数据
-      this.getHomeGoods()
+      // console.log('created');
+      // this.getHomeGoods()
     },
-/*    mounted() {
-      //监听不使用防抖函数的情况下+不监听每张图片加载完的情况下
-      this.$bus.$on('contentOnload', this.contentOnload= () => {
-        this.$refs.scroll.refresh()
-      })
-    },*/
     //混入
     mixins: [itemListenerMixin],
     methods: {
@@ -283,28 +260,18 @@
     },
     //如果想刷新部分内容要启用activated函数，用法同created，activated只有在被keep-alive包裹时会触发，activated函数一进入页面就触发
     activated() {
-      //默认进来时请求10条商品数据
-      // getProduct().then(res => {
-      //   console.log(res.data.length);
-      //   // if (this.num <= res.data.length) {
-      //     for (let i=0; i<10; i++) {
-      //       //重新请求页面数据，先把之前的数据清空，再请求
-      //       this.goods = []
-      //       this.goods.push(res.data[i])
-      //       // this.goods.push(res.data[i])
-      //     }
-      //     //等数据请求完成，并且将新的数据展示出来后, .finishPullUp()进行下一次的上拉加载
-      //     // this.$refs.scroll.finishPullUp()
-      //   // }else {
-      //     //当数据总数为个位数时的请求
-      //     // this.goods.push(...res.data)
-      //     // this.isLoadMore = true
-      //   // }
-      //   console.log("1111商品数据请求成功:",this.goods);
-      // })
-      // console.log('activated');
       //当搜索框不显示时
       if (this.isShow != true) {
+        //让首页的商品数据只请求当前存在的数据一次
+        if(this.goods.length > 0) {
+          //   console.log('activated');
+          //先把之前首页请求的数据清空
+          this.banners = []
+          this.goods = []
+          this.getHomeGoods()
+        }else {
+          this.getHomeGoods()
+        }
         this.$refs.scroll.scrollTo(0, this.saveY, 0)
         this.$refs.scroll.refresh()
       }

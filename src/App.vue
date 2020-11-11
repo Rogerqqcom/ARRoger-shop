@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <keep-alive include="Home,Category,Clothes,Fruit,Phone,Shoes,Profile,Order">
+    <keep-alive include="Home,Profile,Order">
 <!--    <keep-alive exclude="Detail,Cart">-->
       <router-view v-if="isRouterAlive"/>
     </keep-alive>

@@ -1,29 +1,29 @@
 <template>
 	<div class="order-info">
-<!--		<router-link  :to="{path:'/order', query:{uri: 'allOrder'}}" @click="allOrder">-->
-			<div class="icon" @click="allOrder">
+		<router-link  :to="{path:'/order', query:{uri: 'allOrder'}}" class="icon">
+<!--			<div class="icon" @click="allOrder">-->
 				<img src="~assets/img/icon/allOrder.svg" alt="" class="icon-Order">
 				<span>全部订单</span>
-			</div>
-<!--		</router-link>-->
-<!--		<router-link  :to="{path:'/order', query:{uri: 'waitPay'}}" @click="waitPay">-->
-			<div class="icon" @click="waitPay">
+<!--			</div>-->
+		</router-link>
+		<router-link  :to="{path:'/order', query:{uri: 'waitPay'}}" class="icon">
+<!--			<div class="icon" @click="waitPay">-->
 				<img src="~assets/img/icon/waitPay.svg" alt="" class="icon-Order">
 				<span>待付款</span>
-			</div>
-<!--		</router-link>-->
-<!--		<router-link  :to="{path:'/order', query:{uri: 'waitRec'}}" @click="waitRec">-->
-			<div class="icon" @click="waitRec">
+<!--			</div>-->
+		</router-link>
+		<router-link  :to="{path:'/order', query:{uri: 'waitRec'}}" class="icon">
+<!--			<div class="icon" @click="waitRec">-->
 				<img src="~assets/img/icon/waitRec.svg" alt="" class="icon-Order">
 				<span>待收货</span>
-			</div>
-<!--		</router-link>-->
-<!--		<router-link :to="{path:'/order', query:{uri: 'waitCom'}}" @click="waitCom">-->
-			<div class="icon" @click="waitCom">
+<!--			</div>-->
+		</router-link>
+		<router-link :to="{path:'/order', query:{uri: 'waitCom'}}" class="icon">
+<!--			<div class="icon" @click="waitCom">-->
 				<img src="~assets/img/icon/waitVe.svg" alt="" class="icon-Order">
 				<span>待评价</span>
-			</div>
-<!--		</router-link>-->
+<!--			</div>-->
+		</router-link>
 	</div>
 </template>
 

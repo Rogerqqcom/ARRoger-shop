@@ -92,13 +92,14 @@
 		methods: {
       logout() {
 				this.isAlert = true
-        this.$store.state.token = ''
       },
-      cancelEvent:function(){
+      cancelEvent(){
         this.isAlert = false;
       },
       comfirmEvent(){
         if (this.isAlert) {
+          //将vuex里面的用户信息清空
+          this.$store.state.token = ''
           this.$store.state.title = '退出成功'
           this.Toast = true
           let that = this

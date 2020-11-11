@@ -7,48 +7,26 @@
 			<detail-swiper :top-images="topImages"/>
 			<!--基本信息-->
 			<detail-base-info :product="product"/>
+			<!--评论-->
+			<detail-comment-info ref="comment" :comment-info="commentInfo"/>
+			<!--店铺-->
+			<div class="info-header">
+				<div class="header-title">店铺：{{shopName}}</div>
+				<div class="header-more">
+					进店逛逛
+				</div>
+			</div>
+			<!--详情图片-->
 			<div class="detail_xq_title">
 				<p>详情信息</p>
 			</div>
 			<div class="detail_xq_img" v-for="(item, index) in product_xq" :key="index" >
 				<img :src="item" alt="" @load="detailImageLoad"/>
 			</div>
-			<ul>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-				<li>sdkjdsik</li>
-			</ul>
 		</scroll>
 		<back-top @click.native="backTop" v-show="isShowBackTop"/>
 
-		<detail-bottom-bar @addCart="addToCart" @goBuy="goBuy"/>
+		<detail-bottom-bar :phone="phone" @addCart="addToCart" @goBuy="goBuy"/>
 		<min-toast v-if="Toast"/>
 
 	</div>
@@ -62,6 +40,7 @@
 	import DetailSwiper from "./childComps/DetailSwiper";
 	import DetailBaseInfo from "./childComps/DetailBaseInfo";
 	import DetailBottomBar from "./childComps/DetailBottomBar";
+  import DetailCommentInfo from "./childComps/DetailCommentInfo";
 
   import { getProduct} from "network/products";
   import {itemListenerMixin, backTopMixin} from "common/mixin";
@@ -83,7 +62,10 @@
         Toast: false,
         token: {},
         oneUser: {},
-				cartProduct: {}
+				cartProduct: {},
+        commentInfo: [],
+        shopName: '',
+				phone: ''
       }
     },
 		components: {
@@ -91,6 +73,7 @@
       DetailNavBar,
       DetailBaseInfo,
       DetailBottomBar,
+      DetailCommentInfo,
 
       Scroll,
       minToast
@@ -111,7 +94,14 @@
         this.topImages = this.product[0].imgStr
 				//获取详情图片
         this.product_xq = this.product[0].product_xq
-        // console.log(this.product_xq);
+				//获取店铺名
+				this.shopName = this.product[0].shopName
+        //获取评论信息
+				if (this.product[0].comments) {
+          this.commentInfo = this.product[0].comments
+				}
+				//获取商家电话
+				this.phone = this.product[0].phone
       })
 			//3.获取购物车数据
 			getCartList().then(res => {
@@ -120,11 +110,13 @@
       })
 
 			//4.获取当前登录用户
-      // let token = JSON.parse(localStorage.getItem('token'))
-      let token = this.$store.state.token || JSON.parse(localStorage.getItem('token'))
-      getOneUser(token.id).then(res => {
-        this.oneUser = res.data
-      })
+      if (this.$store.state.token) {
+        // let token = JSON.parse(localStorage.getItem('token'))
+        let token = this.$store.state.token || JSON.parse(localStorage.getItem('token'))
+        getOneUser(token.id).then(res => {
+          this.oneUser = res.data
+        })
+			}
 
 
     },
@@ -157,6 +149,9 @@
             cartProduct.Subtotal = this.product[0].price
             cartProduct.price = this.product[0].price
             cartProduct.productId = this.productId;
+            cartProduct.shopName = this.product[0].shopName
+            cartProduct.phone = this.product[0].phone
+            cartProduct.businessAddress = this.product[0].businessAddress
             cartProduct.checked = true
             cartProduct.count = 1
             cartProduct.userId = this.oneUser.id
@@ -206,20 +201,6 @@
 										}, 1000)
 									}
 								})
-                // this.oneUser.cartList.push(cartProduct)
-                // putUser(this.oneUser.id, this.oneUser).then(res => {
-                //   if (res.status === 200) {
-                //     // localStorage.setItem('token', JSON.stringify(this.oneUser))
-                //     console.log('添加了新的商品 !');
-                //     this.$store.state.title = '添加了新的商品 !'
-                //     this.Toast = true
-                //     let _this = this
-                //     setTimeout(function () {
-                //       _this.Toast = false
-                //       _this.$router.push('/cart')
-                //     }, 1000)
-                //   }
-                // })
               }
 						// }
           // })
@@ -238,9 +219,13 @@
           payProduct.Subtotal = this.product[0].price
           payProduct.price = this.product[0].price
           payProduct.productId = this.productId;
+          payProduct.shopName = this.product[0].shopName
+          payProduct.phone = this.product[0].phone
+          payProduct.businessAddress = this.product[0].businessAddress
           payProduct.checked = true
           payProduct.count = 1
           payProduct.id = 1
+
 
           let checkedItem = {
             arr: []
@@ -300,6 +285,29 @@
 			bottom: 1rem;
 			left: 0;
 			right: 0;
+		}
+		.info-header {
+			height: 1rem;
+			line-height: 1rem;
+			background-color: #fff;
+			border-bottom: 1px solid rgba(0,0,0,.1);
+			overflow: hidden;
+
+			.header-title {
+				float: left;
+				font-size: 0.45rem;
+				margin-left: 0.3rem;
+				color: black;
+			}
+			.header-more {
+				float: right;
+				border-radius: 10px;
+				width: 1.5rem;
+				height: 0.6rem;
+				margin-right: 0;
+				font-size: 0.26rem;
+				font-style: italic;
+			}
 		}
 	}
 </style>

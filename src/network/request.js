@@ -18,9 +18,9 @@ export function request(config) {
     const instance =axios.create({   //create的返回值本身就是Promise,所以下面直接return就可以
       // baseURL: 'http://152.136.185.210:8000/api/z8',
       // baseURL: 'https://api-hmugo-web.itheima.net/api/public/v1',
-      // baseURL: 'http://10.51.161.232:3000',
+      baseURL: 'http://10.51.161.232:3000',
       // baseURL: 'http://localhost:3000',
-      baseURL: 'http://192.168.0.6:3000',
+      // baseURL: 'http://192.168.0.6:3000',
       timeout:5000
     })
 

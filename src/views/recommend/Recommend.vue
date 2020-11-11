@@ -9,7 +9,7 @@
 <script>
   import Nav from "./childComps/Nav";
   import SortButton from "./childComps/SortButton";
-  import SortContent from "./childComps/SortContent";
+  import SortContent from "../../components/content/GoodsContent/GoodsContent";
 
   import {getProduct} from "../../network/products";
 
@@ -26,14 +26,43 @@
       SortContent
     },
     created() {
-      getProduct().then(res => {
-        this.product = res.data.filter(item => item.category == "服装类")
-        // console.log(this.product);
-      })
+      this.getRecommend(this.$route.query.recommend_type)
     },
     methods: {
+      /**
+			 * 网络请求
+			 * */
+      getRecommend(recommend_type) {
+        //获取水果类
+        if (recommend_type == 'fruit') {
+          getProduct().then(res => {
+            this.product = res.data.filter(item => item.category == "水果类")
+            // console.log(this.product);
+          })
+				}
+        //获取服装类
+        if (recommend_type == 'clothes') {
+          getProduct().then(res => {
+            this.product = res.data.filter(item => item.category == "服装类")
+            // console.log(this.product);
+          })
+				}
+        //获取鞋类
+        if (recommend_type == 'shoes') {
+          getProduct().then(res => {
+            this.product = res.data.filter(item => item.category == "鞋类")
+            // console.log(this.product);
+          })
+				}
+        //获取手机类
+        if (recommend_type == 'phone') {
+          getProduct().then(res => {
+            this.product = res.data.filter(item => item.category == "手机类")
+            // console.log(this.product);
+          })
+				}
+			},
       BySales() {
-        // console.log('按销量');
         //按销量从高到低排序
         //sort()内部是利用递归进行冒泡排序的；凡是返回大于0的正数的时候就要交换位置。（内部实现）
         this.product = this.product.sort(function (a,b) {return b.sale - a.sale})
@@ -46,13 +75,6 @@
         //根据点击的商品跳转至对应的详情页
         this.$router.push('/detail/' + this.product[index].id)
       },
-    },
-    //如果想刷新部分内容要启用activated函数，用法同created，activated只有在被keep-alive包裹时会触发，activated函数一进入页面就触发
-    activated() {
-      console.log("profile-activated");
-      if (this.$store.state.token) {
-        this.isLogin = true
-      }
     }
   }
 </script>

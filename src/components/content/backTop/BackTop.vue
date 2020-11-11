@@ -13,11 +13,12 @@
 <style scoped>
   .back-top{
     position: fixed;
-    right: 0.25rem;
-    bottom: 1.1rem;
+    right: 0.2rem;
+    bottom: 1.9rem;
   }
   .back-top img {
     width: 0.9rem;
     height: 0.9rem;
+		opacity: 0.75;
   }
 </style>

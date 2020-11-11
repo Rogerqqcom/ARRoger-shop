@@ -18,6 +18,7 @@
     <div>{{product[0].titleTwo}}</div>
     <div>
       <span>￥{{product[0].price}}</span>
+      <span>销量: &nbsp;{{product[0].sale}}</span>
       <span>库存: &nbsp;{{product[0].totalNum}}</span>
     </div>
   </div>
@@ -46,7 +47,7 @@
     font-size: 0.3rem;
     background-color: #fff;
     /*border-bottom: 5px solid #f2f5f8;*/
-    border-bottom: 1px solid #f2f5f8;
+    border-bottom: 5px solid #f2f5f8;
 
     div:nth-child(1) {
       padding: 0.2rem 0 0.05rem 0.19rem;
@@ -64,8 +65,14 @@
         font-weight: bolder;
       }
       span:nth-child(2) {
-        margin-left:  4rem;
+        margin-left:  1.5rem;
         color: #9e9e9e;
+        font-style: italic;
+      }
+      span:nth-child(3) {
+        margin-left:  1.3rem;
+        color: #9e9e9e;
+        font-style: oblique;
       }
     }
 

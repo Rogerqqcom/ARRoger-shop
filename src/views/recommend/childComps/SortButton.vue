@@ -22,7 +22,7 @@
     },
 		methods: {
       BySales() {
-        console.log('按销量排序');
+        console.log('按销量高到低排序');
         //点击后修改默认的颜色
 				//1.关闭全部按钮的颜色
         this.active1 = false
@@ -34,7 +34,7 @@
 				this.$emit('BySales')
       },
       ByPrice() {
-        console.log('按价格排序');
+        console.log('按价格低到高排序');
         //1.关闭全部按钮的颜色
         this.active1 = false
         //打开点击按销量后显示的颜色

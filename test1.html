@@ -1,286 +1,37 @@
-
-<!DOCTYPE html>
-
-<html lang="en">
-
-
-
-<head>
-
-	<meta charset="UTF-8">
-
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-
-	<title>fileReader</title>
-
-	<script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-
-	<style lang="">
-
-		.upload {
-
-			width: 200px;
-
-			height: 50px;
-
-			line-height: 50px;
-
-			text-align: center;
-
-			position: relative;
-
-			background-color: orange;
-
-		}
-
-
-
-		.file {
-
-			position: absolute;
-
-			left: 0;
-
-			top: 0;
-
-			width: 100%;
-
-			height: 100%;
-
-			opacity: 0;
-
-		}
-
-
-
-		.outbox {
-
-			position: relative;
-
-			display: inline-block;
-
-		}
-
-
-
-		.outbox img {
-
-			width: 200px;
-
-			height: 200px;
-
-		}
-
-
-
-		.delete {
-
-			position: absolute;
-
-			width: 20px;
-
-			height: 20px;
-
-			top: 0;
-
-			right: 0;
-
-			background: url(https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1381865013,3042801585&fm=27&gp=0.jpg) center no-repeat;
-
-			background-size: 100% 100%;
-
-		}
-
-	</style>
-
-</head>
-
-
-
-<body>
-
-<div class="upload">上传
-
-	<input type="file" accept="image/*" multiple class="file" id="imgfile">
-
-</div>
-
-<div id="previewImg"></div>
-
-<button id="btn">提交</button>
-
+<template>
+	<div>
+		<input v-show="false" type="file" accept="image/*" @change="tirggerFile($event)" ref="input" />
+		<div style="width:200px;height:200px;border:1px solid;text-align:center;" @click="openImg">
+			<span v-if="imgUrl==''">点击上传</span>
+			<img style="height:100%;width:100%;" v-if="imgUrl!=''" :src="imgUrl" />
+		</div>
+	</div>
+</template>
 <script>
-
-  var input = document.getElementById("imgfile");
-
-  var preview = document.getElementById("previewImg");
-
-  var urlArr = [];
-
-  //检测浏览器是否支持FileReader
-
-  if (typeof(FileReader) === 'undefined') {
-
-    result.innerHTML = "抱歉，你的浏览器不支持 FileReader，请使用现代浏览器操作！";
-
-    input.setAttribute('disabled', 'disabled');
-
-  } else {
-
-    //开启监听
-
-    input.addEventListener('change', readFile, false);
-
-  }
-
-
-
-  function readFile() {
-
-    var files = this.files;
-
-    for (var i = 0; i < files.length; i++) {
-
-      //限定上传文件的类型，判断是否是图片类型
-
-      (function() {
-
-        var temp = i;
-
-        if (!/image\/\w+/.test(files[i].type)) {
-
-          return false;
-
-        }
-
+  export default {
+    data() {
+      return {
+        isSelectFile: false,
+        imgUrl: ""
+      };
+    },
+    methods: {
+      tirggerFile: function(event) {
+        let file = event.target.files[0];
+        let url = "";
         var reader = new FileReader();
-
-        reader.readAsDataURL(files[i]);
-
+        reader.readAsDataURL(file);
+        let that = this;
         reader.onload = function(e) {
-
-          compress(this.result, temp);
-
+          url = this.result.substring(this.result.indexOf(",") + 1);
+          that.imgUrl = "data:image/png;base64," + url;
+          // that.$refs['imgimg'].setAttribute('src','data:image/png;base64,'+url);
         };
-
-      })()
-
-    }
-
-
-
-  }
-
-
-
-  function compress(res, index) {
-
-    var img = new Image();
-
-    var maxHeight = 300; //用来设置压缩比例
-
-    img.onload = function() { //要先确保图片完整获取到,这是个异步事件
-
-      var canvas = document.createElement('canvas');
-
-      var ctx = canvas.getContext('2d');
-
-      if (img.height > maxHeight) {
-
-        img.width *= maxHeight / img.height;
-
-        img.height = maxHeight;
-
+      },
+      openImg() {
+        this.$refs.input.click();
       }
-
-      canvas.height = img.height;
-
-      canvas.width = img.width;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height); //将图片绘制到canvas中
-
-      var dataUrl = canvas.toDataURL('image/jpg', 1); //转换图片为dataURL(图片格式,图片质量)
-
-      var div = document.createElement('div');
-
-      var span = document.createElement('span');
-
-      div.setAttribute('class', 'outbox');
-
-      span.setAttribute('class', 'delete');
-
-      span.setAttribute('data-value', index++);
-
-      var img1 = document.createElement('img');
-
-      img1.src = dataUrl; //把得到的base64赋值到img标签显示
-
-      div.appendChild(img1);
-
-      div.appendChild(span);
-
-      preview.appendChild(div);
-
-      urlArr.push(dataUrl);
-
     }
-
-    img.src = res;
-
-  }
-
-  //删除图片操作
-
-  $('#previewImg').on('click', 'span', function() {
-
-    urlArr.splice($(this).attr('data-value'), 1);
-
-    var html = '';
-
-    for (var j = 0; j < urlArr.length; j++) {
-
-      html += "<div class = 'outbox'><img src=" + urlArr[j] + "><span class='delete' data-value=" + j +
-
-        "></span></div>";
-
-    }
-
-    $('#previewImg').html(html);
-
-  })
-
-  $('#btn').click(function() {
-
-    console.log(urlArr);
-
-  })
-  /**
-   * 将数字取整为10的倍数
-   * @param {Number} num 需要取整的值
-   * @param {Boolean} ceil 是否向上取整
-   * @param {Number} prec 需要用0占位的数量
-   */
-  const formatInt = (num, prec = 1, ceil = true) => {
-    const len = String(num).length;
-    const mult = Math.pow(10, prec);
-    return ceil ?
-      Math.ceil(num / mult) * mult :
-      Math.floor(num / mult) * mult;
-  }
-
-  console.log(formatInt(21, 1, false));
-  // formatInt(2345, 2. false) -> 2300
-  // formatInt(2345, 3, true)  -> 3000
-  // formatInt(2345, 3, false) -> 2000
-
+  };
 </script>
 
-</body>
-
-
-
-</html>

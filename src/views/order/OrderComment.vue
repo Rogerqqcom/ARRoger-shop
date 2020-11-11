@@ -34,7 +34,35 @@
 		</div>
 		<!--编写评价-->
 		<div class="comment">
-			<textarea v-model="comment" name="" id="" cols="50" rows="10"></textarea><br/>
+			<!--上传图片-->
+			<div  v-if="allowAddImg">
+				<a href="javascript" class="file gradient"
+				>
+					点我选择
+					<input
+						type="file"
+						id="file"
+						name="image"
+						@change="shangc($event)"
+						accept="image/jpg, image/jpeg, image/png"
+					/>
+				</a>
+			</div>
+
+			<br/>
+			<!--展示/删除预览图-->
+			<div class="img_box" >
+				<div class="img_block"  v-for="(item,index) in commentImage" :key="index">
+					<img :src="item" alt="">
+					<span class="img_delete" @click="deleteImg(index)">X</span>
+				</div>
+				<div class="img_null"  v-if="commentImage.length == 0" >
+					请选择图片
+				</div>
+			</div>
+			<!--文字评价-->
+			<textarea v-model="comment" placeholder="请输入评价内容"></textarea><br/>
+
 			<button @click="subComment">提交评价</button>
 		</div>
 		<min-toast v-if="isToast"/>
@@ -66,6 +94,10 @@
 				oneUser: [],
 				//提示弹窗
 				isToast: false,
+				//评价图
+        commentImage: [],
+        allowAddImg:true,
+
 			}
 		},
 		components: {
@@ -99,9 +131,38 @@
       },
       goComment(index) {
           this.showProduct = false
-          //保存跳转后的商品id
+          //保存跳转到编辑评价页后的商品id
           this.productId = this.productComment[index].productId
           console.log("commnet",this.productId);
+      },
+			/*
+			图片上传
+			* */
+      shangc(e) {
+        let files = document.getElementById("file").files[0];
+        // console.log(files);
+        //转码base64
+        let reader = new FileReader();
+        let imgFile;
+        reader.readAsDataURL(files);
+        reader.onload =  e => {
+          //这里的imgFile为'data:image/png;base64,'+ base64编码字符串拼接形成的图片
+          imgFile = e.target.result;
+          // console.log( imgFile);
+
+          //这里的 picPath 'data:image/png;base64,'+ base64为编码字符串拼接形成图片的
+          this.commentImage.push(imgFile)
+          console.log(this.commentImage);
+          if (this.commentImage.length >= 5) {
+            this.allowAddImg = false;
+          }
+        }
+      },
+      deleteImg: function(index){
+        this.commentImage.splice(index,1);
+        if(this.commentImage.length<5){
+          this.allowAddImg = true;
+        }
       },
       subComment() {
         if (this.comment) {
@@ -122,7 +183,8 @@
 								buyTime: this.$store.state.productComment.created_order,
 								commentTime: myDate.getFullYear() + '/' + myDate.getMonth() +'/' + myDate.getDate() + ' '
 									+ myDate.getHours() + ':' + myDate.getMinutes(),
-								comment: this.comment
+								comment: this.comment,
+                commentImage: this.commentImage ? this.commentImage : []
 							}
 							//商品评论为空
               if (!this.product.comments) {
@@ -130,23 +192,17 @@
                 let comments = []
                 //将空数组入product对象中s
                 this.product['comments'] = comments
-                //将评论信息评论信息加入product对象中
+                //将用户输入的评论信息加入product对象中
                 this.product.comments.push(obj)
                 console.log(this.product);
+                //提交到对应商品里面
                 putProduct(this.productId, this.product).then(res => {
                   console.log("评论成功",res.data);
                   // /!*修改订单状态*!/
                   getOrder(this.$store.state.productComment.id).then(res => {
                     let obj = res.data
                     console.log(obj);
-                    // if (obj.userId == this.oneUser.id) {
-                    //   if (this.product.comments.find(item => item.orderId == this.$store.state.productComment.id)) {
-                    //
-										// 	}
-                    // }
-                    // console.log(obj[0]);
                     obj[0].is_pay = "已评价"
-
                     putOrder(this.$store.state.productComment.id, obj[0]).then(res => {
                       console.log('订单状态修改成功');
                       this.isToast = true
@@ -157,38 +213,6 @@
                       }, 800)
                     })
                   })
-                  // //1.先检索当前订单
-                  // let userOrder = this.oneUser.Order.filter(item => item.id == this.$store.state.productComment.id)
-                  // console.log(userOrder);
-                  // //2.修改订单状态为待评价
-                  // userOrder[0].is_pay = "已评价"
-                  // console.log(userOrder);
-                  // //替换订单栏中的信息
-                  // // let OrderId
-                  // // for (let i=0; i<this.user.Order.length;i++) {
-                  // //   if (this.user.Order[i].id == this.dataInfo.id) {
-                  // //     OrderId = i
-                  // //   }
-                  // // }
-                  // let OrderId
-                  // //获取当前商品的下标
-                  // for (let i=0; i<this.oneUser.Order.length; i++) {
-                  //   if (this.oneUser.Order[i].id == this.$store.state.productComment.id) {
-                  //     OrderId = i
-                  //   }
-                  // }
-                  // this.oneUser.Order.splice(OrderId, 1, userOrder[0])
-									//
-                  // //提交到服务器
-                  // putUser(this.oneUser.id, this.oneUser).then(res => {
-                  //   console.log("订单状态修改为已评价");
-                  //   this.isToast = true
-                  //   this.$store.state.title = '首次评价成功'
-                  //     setTimeout(() => {
-                  //       this.isToast = false
-                  //       this.showProduct = true
-                  //     },1000)
-                  // })
                 })
 
               }else {
@@ -223,32 +247,6 @@
                             }, 800)
                           })
                         })
-                        // //1.先检索当前订单
-                        // let userOrder = this.oneUser.Order.filter(item => item.id == this.$store.state.productComment.id)
-                        // console.log(userOrder);
-												//
-                        // //2.修改订单状态为待评价
-                        // userOrder[0].is_pay = "已评价"
-                        // console.log(userOrder);
-                        // //替换订单栏中的信息
-                        // let OrderId
-                        // //获取当前商品的下标
-                        // for (let i=0; i<this.oneUser.Order.length; i++) {
-                        //   if (this.oneUser.Order[i].id == this.$store.state.productComment.id) {
-                        //     OrderId = i
-                        //   }
-                        // }
-                        // this.oneUser.Order.splice(OrderId, 1, userOrder[0])
-                        // //提交到服务器
-                        // putUser(this.oneUser.id, this.oneUser).then(res => {
-                        //   console.log("订单状态修改为已评价");
-                        //   this.isToast = true
-                        //   this.$store.state.title = '不同用户订单评价'
-                        //   setTimeout(() => {
-                        //     this.isToast = false
-                        //     this.showProduct = true
-                        //   },1000)
-                        // })
                       })
 										}else {
                       this.product.comments.push(obj)
@@ -275,28 +273,6 @@
                             }, 800)
                           })
                         })
-
-                        // userOrder[0].is_pay = "已评价"
-                        // console.log(userOrder);
-                        // let OrderId
-                        // //获取当前商品的下标
-                        // for (let i=0; i<this.user.Order.length;i++) {
-                        //   if (this.oneUser.Order[i].id == this.$store.state.productComment.id) {
-                        //     OrderId = i
-                        //   }
-                        // }
-                        // //替换订单栏中的信息
-                        // this.oneUser.Order.splice(OrderId, 1, userOrder[0])
-                        // //提交到服务器
-                        // putUser(this.oneUser.id, this.oneUser).then(res => {
-                        //   console.log("订单状态修改为已评价");
-                        //   this.isToast = true
-                        //   this.$store.state.title = '同一用户不同订单评价'
-                        //   setTimeout(() => {
-                        //     this.isToast = false
-                        //     this.showProduct = true
-                        //   },1000)
-                        // })
                       })
 										}
 									}
@@ -459,10 +435,71 @@
 	}
 	/*编写评价*/
 	.comment {
-		margin: 1rem 7%;
+		margin: 0 5%;
+		width: 100%;
+		.file {
+			position: relative;
+			display: inline-block;
+			background: #1296db;
+			padding: 0.06rem 0.3rem;
+			overflow: hidden;
+			text-decoration: none;
+			text-indent: 0;
+			border-radius: 1rem;
+			color: #fff;
+			font-size: 0.3rem;
+			input {
+				position: absolute;
+				right: 0;
+				top: 0;
+				opacity: 0;
+			}
+		}
+		.img_box {
+			width: 90%;
+			background-color: #f7f7f7;
+			border: 1px #58a7db solid;
+			margin-top: -1rem;
+			height: 1.2rem;
+			display: flex;
+			.img_block {
+				display: inline-block;
+				margin-left: 0.1rem;
+				width: 20%;
+				position: relative;
+				margin-top: 0.1rem;
+				/*background-color: #f00;*/
+				img {
+					width: 1rem;
+					height: 1rem;
+				}
+				span {
+					color: red;
+					font-size: 0.45rem;
+					position: absolute;
+					top: 0.1rem;
+				}
+			}
+
+			.img_null {
+				font-size: 0.45rem;
+				padding:3% 30%;
+				color: #b1b1b1;
+			}
+
+		}
+		textarea {
+			padding: 0.2rem;
+			height: 3rem;
+			width: 90%;
+			line-height: 1.5;
+			letter-spacing: 1px;
+			border-top: 1px solid #6e6e6e;
+			margin-top: 0.5rem;
+		}
 		button {
 			height: 0.8rem;
-			width: 100%;
+			width: 90%;
 			background-color: #1296db;
 			border-radius: 30px;
 			border-style: none;

@@ -53,8 +53,9 @@ export default {
             align-items: center;
         }
         .alertMain{
-            width: 6rem;
-            height: 5rem;
+            width: 5rem;
+            height: 4rem;
+            margin-top: -4rem;
             background: #fff;
             display: flex;
             flex-direction: column;

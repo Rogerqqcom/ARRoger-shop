@@ -63,6 +63,7 @@
   }
   .goods-item img{
     width: 100%;
+    height: 4.2rem;
     border-radius: 5px;
   }
   .goods-info {

@@ -1,7 +1,7 @@
 <template>
   <div class="recommend">
     <div v-for="item in recommends" class="recommend-item">
-      <router-link :to="item.link">
+      <router-link :to="{path: '/recommend', query: {recommend_type: item.link}}">
         <img :src="imgUrl(item)" alt="">
         <div>{{item.title}}</div>
       </router-link>

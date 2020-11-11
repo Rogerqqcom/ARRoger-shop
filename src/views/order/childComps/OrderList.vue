@@ -20,7 +20,6 @@
 							<span>x{{item.commodity.arr.length}}</span>
 						</div>
 
-
 						<div v-if="item.is_pay == '未支付'" class="orders-but" @click="toSettlement(index)">
 							<button>去支付</button>
 						</div>
@@ -36,7 +35,6 @@
 <!--							<button  @click="toeValuate(index)">去评价</button>-->
 						</div>
 					</div>
-<!--					<p class="bottom-txt" v-if="this.orders.length >= 1">~没有更多商品了~</p>-->
 				</div>
 			</div>
 			<div v-if="this.orders.length == 0" class="tips">Tips:当前没有此类订单</div>
@@ -95,7 +93,8 @@
         // let dataInfo = this.ordersContent[id - 1]
         this.ordersContent = this.ordersContent.filter(item => item.id == id )
         console.log(this.ordersContent);
-        this.$router.push({path:'/orderInfo', query:{data: this.ordersContent[0]}})
+        //跳转时携带当前点击的订单数据
+        this.$router.push({path:'/orderDetail', query:{data: this.ordersContent[0]}})
       },
 
 

@@ -15,11 +15,17 @@
 			</div>
 		</nav-bar>
 
+		<!--选择栏-->
+		<div class="top-bg">
+			<span :class="showUser == true ? 'spanActive':''" @click="userLogin">用户登录</span>
+			<span :class="showUser == false ?'spanActive':''"  @click="businessLogin">商家登录</span>
+		</div>
 		<!--登录输入-->
 		<div class="login-bg">
-			<div class="userName"><label for="1">账户 : </label><input id="1" type="text" placeholder="用户名" v-model="user.username"></div>
+			<div class="userName"><label for="1">账号 : </label><input id="1" type="text" placeholder="用户名" v-model="user.username"></div>
 			<div class="passWord"><label for="2">密码 : </label><input id="2" type="password" placeholder="密码" v-model="user.password"></div>
 		</div>
+
 		<div class="login-button">
 			<button @click="onSubmit">登录</button>
 		</div>
@@ -35,6 +41,7 @@
   import minToast from "components/common/toast/minToast";
 
   import {getUser} from "network/user"
+  import {getBusiness} from "../../../network/business";
   export default {
     name: "Login",
 		data() {
@@ -49,7 +56,10 @@
         userData: {
           name: '',
 					address: ''
-				}
+				},
+				//显示用户登录还是商家登录
+        showUser: true,
+        business: []
 			}
 		},
 		components: {
@@ -63,57 +73,103 @@
         //请求到用户信息后保存在userArr数组中
 				this.userArr = res.data
       })
+      getBusiness().then(res => {
+				this.business = res.data
+				console.log('business-register数据请求成功',res);
+      })
     },
 
     methods: {
+      userLogin() {
+        this.showUser = true
+      },
+      businessLogin() {
+        this.showUser = false
+      },
       onSubmit() {
-        // 判断是输入的账号密码是否正确
-        let userInfo = this.userArr.filter(item => item.userName === this.user.username && item.passWord === this.user.password)
-        let that = this
+        if (this.showUser) {
+          // 判断是输入的账号密码是否正确
+          let userInfo = this.userArr.filter(item => item.userName === this.user.username && item.passWord === this.user.password)
+          let that = this
+          if (userInfo.length > 0) {
+            this.$store.state.title = '登录中...'
+            this.loadingToast = true
+            console.log('login success');
+            setTimeout(function () {
+              //本地存储用户信息
+              // localStorage.setItem('token', JSON.stringify(userInfo[0]))
+              //将用户信息作为token保存在vuex中，但实际不是上token只是用户的一串数字，但页面刷新后变成无登录状态
+              that.$store.state.token = userInfo[0]
+              //跳转前关闭弹窗
+              that.loadingToast = false
 
-				if (userInfo.length > 0) {
-				  this.$store.state.title = '登录中...'
-					this.loadingToast = true
-          console.log('login success');
-          setTimeout(function () {
-            //本地存储用户信息
-				    // localStorage.setItem('token', JSON.stringify(userInfo[0]))
-						//将用户信息作为token保存在vuex中，但实际不是上token只是用户的一串数字，但页面刷新后变成无登录状态
-						that.$store.state.token = userInfo[0]
-						//跳转前关闭弹窗
-						that.loadingToast = false
-
-						that.userData.name = userInfo[0].name
-            if (userInfo[0].address.length > 0) {
-              //筛选得到的地址为默认状态的地址
-              let DeAddress = userInfo[0].address.filter(item => item.isDefault == true)
-              //获取到地区进行展示
-              that.userData.address = DeAddress[0].address
-            }else {
-              that.userData.address = 'null'
-            }
-            //将需要展示在个人中心的用户昵称和地址信息保存到vuex
-            that.$store.state.userData = that.userData
-            console.log(that.$store.state.userData);
-            that.$router.push('/profile')
-          }, 1000)
-				}else if(this.user.username === '' || this.user.password === ''){
-				  this.$store.state.title = '输入不能有空 ！！'
-					this.minToast = true
-					setTimeout(function () {
-					  //1400ms后关闭弹窗
-					  that.minToast = false
-          }, 1400)
-          console.log('login fail');
-        }else {
-          this.$store.state.title = '账号或密码错误 ！！'
-          this.minToast = true
-          setTimeout(function () {
-            //1400ms后关闭弹窗
-            that.minToast = false
-          }, 1400)
-          console.log('login fail');
-        }
+              that.userData.name = userInfo[0].name
+              if (userInfo[0].address.length > 0) {
+                //筛选得到的地址为默认状态的地址
+                let DeAddress = userInfo[0].address.filter(item => item.isDefault == true)
+                //获取到地区进行展示
+                that.userData.address = DeAddress[0].address
+              }else {
+                that.userData.address = 'null'
+              }
+              //将需要展示在个人中心的用户昵称和地址信息保存到vuex
+              that.$store.state.userData = that.userData
+              console.log(that.$store.state.userData);
+              that.$router.push('/profile')
+            }, 1000)
+          }else if(this.user.username === '' || this.user.password === ''){
+            this.$store.state.title = '输入不能有空'
+            this.minToast = true
+            setTimeout(function () {
+              //1400ms后关闭弹窗
+              that.minToast = false
+            }, 1400)
+            console.log('login fail');
+          }else {
+            this.$store.state.title = '账号或密码错误'
+            this.minToast = true
+            setTimeout(function () {
+              //1400ms后关闭弹窗
+              that.minToast = false
+            }, 1400)
+            console.log('login fail');
+          }
+				}else {
+          console.log('商家登录');
+          // 判断是输入的账号密码是否正确
+          let businessInfo = this.business.filter(item => item.businessName === this.user.username && item.businessPwd === this.user.password)
+          let that = this
+          if (businessInfo.length > 0) {
+            this.$store.state.title = '登录中...'
+            this.loadingToast = true
+            console.log('login success');
+            setTimeout(function () {
+              //本地存储用户信息
+              // localStorage.setItem('token', JSON.stringify(userInfo[0]))
+              //将用户信息作为token保存在vuex中，但实际不是上token只是用户的一串数字，但页面刷新后变成无登录状态
+              that.$store.state.business = businessInfo[0]
+              //跳转前关闭弹窗
+              that.loadingToast = false
+              that.$router.push('/business')
+            }, 1000)
+          }else if(this.user.username === '' || this.user.password === ''){
+            this.$store.state.title = '输入不能有空'
+            this.minToast = true
+            setTimeout(function () {
+              //1400ms后关闭弹窗
+              that.minToast = false
+            }, 1400)
+            console.log('login fail');
+          }else {
+            this.$store.state.title = '账号或密码错误'
+            this.minToast = true
+            setTimeout(function () {
+              //1400ms后关闭弹窗
+              that.minToast = false
+            }, 1400)
+            console.log('login fail');
+          }
+				}
 			}
     }
   }
@@ -151,7 +207,7 @@
 			width: 100%;
 			// height: 1rem;
 			font-size: 0.3rem;
-			margin-top: 3rem;
+			margin-top: 0.3rem;
 			.userName , .passWord {
 				width: 90%;
 				margin: 0 auto;
@@ -201,6 +257,32 @@
 			margin-top: 0.3rem;
 			color: #fdfdfd;
 			margin-right: 0.4rem;
+		}
+	}
+	/*选择栏*/
+	.top-bg{
+		width: 90%;
+		height: 0.8rem;
+		background-color: rgba(55, 113, 196, 0.1);
+		display: flex;
+		justify-content: space-around;
+		margin: 2.5rem auto 0;
+		/*border-radius: 2rem;*/
+
+		span{
+			display: block;
+			width: 2.4rem;
+			text-align: center;
+			line-height: 0.8rem;
+			color: #9a9a9a;
+		}
+		.spanActive{
+			display: block;
+			width: 2.4rem;
+			color: #fff;
+			border-bottom: 1px solid #fff;
+			text-align: center;
+			line-height: 0.8rem;
 		}
 	}
 </style>

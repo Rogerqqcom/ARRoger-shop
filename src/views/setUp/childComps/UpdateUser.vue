@@ -76,6 +76,7 @@
 		box-shadow: 2px 2px #8b8b8b;
 		font-weight: bold;
 		height: 5rem;
+		position: relative;
 		top: 0.8rem;
 		width: 90%;
 		margin: 0 auto;
@@ -120,7 +121,6 @@
 
 
 		animation: myfirst 1s;
-		position: relative;
 		@keyframes myfirst {
 			0% {
 				background: #f00;

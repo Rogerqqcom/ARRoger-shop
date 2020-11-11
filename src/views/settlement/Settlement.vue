@@ -142,7 +142,7 @@
         //如果点击了“立即支付”按钮，isPay改为true
 				this.isPay = true
 
-        //如果结算的商品中有flag，说明为点击“立即购买”后的商品
+        //如果结算的商品中有flag，说明为在详情页点击“立即购买”后的商品
         if (this.$store.state.commodity.flag && !this.$route.query.id) {
           if (!this.address.name) {
             alert('请先选择地址！')
@@ -197,7 +197,7 @@
               "address": this.address,
               // 支付方式
               "mode": this.mode,
-              //支付与否
+              //订单状态
               "is_pay": "待收货",
               "created_order":myDate.getFullYear() + '/' + myDate.getMonth() +'/' + myDate.getDate() + '/' + myDate.getHours() + ':' + myDate.getMinutes(),
               "userId": this.user.id
@@ -214,7 +214,6 @@
                 })
               }
             })
-
 
             //遍历所有结算的商品，让对应的商品销量加1，库存减一 （11/4）
             for (let i = 0; i < this.payProduct.length; i++) {
@@ -263,7 +262,20 @@
               "is_pay": "待收货",
               "created_order": myDate.getFullYear() + '/' + myDate.getMonth() + '/' + myDate.getDate() + ' ' + myDate.getHours() + ':' + myDate.getMinutes(),
               "userId": this.user.id
-              // id: this.user.Order[this.$route.query.id - 1].id
+            }
+            //遍历所有结算的商品，让对应的商品销量加1，库存减一 （11/4）
+            for (let i = 0; i < this.payProduct.length; i++) {
+              this.payProduct[i].[0].sale += 1
+              this.payProduct[i].[0].totalNum -= 1
+            }
+            // console.log(this.payProduct);
+            for (let i = 0; i < this.payProduct.length; i++) {
+              //如果商品有多个，则提交修改的商品的销量和库存
+              if (this.payProduct[i].[0].id == this.commodity.arr[i].productId) {
+                putProduct(this.commodity.arr[i].productId, this.payProduct[i].[0]).then(res => {
+                  console.log("库存减一，销量加1", res.data);
+                })
+              }
             }
             //如果查找到该订单，就替换新的内容
             getOrder(this.$route.query.id).then(res => {
@@ -295,7 +307,6 @@
                 "is_pay": "未支付",
                 "created_order": myDateTwo.toLocaleDateString() + ' ' + myDateTwo.getHours() + ':' + myDateTwo.getMinutes(),
                 "userId": this.user.id
-                // id: this.user.Order.length ? this.user.Order[this.user.Order.length - 1].id + 1 : 1
               }
               // this.user.Order.push(Order)
               //清除购物车列表为选中的状态的商品

@@ -4,8 +4,8 @@
       <div>
         <i class="icon service"></i>
 <!--        <span class="text">客服</span>-->
-        <a class="text" href="tel:18200892850">客服</a>
-
+        <a class="text" :href="'tel:' + phone">客服</a>
+<!--        <div @click="callPhone">客服</div>-->
       </div>
       <div>
         <i class="icon shop"></i>
@@ -26,6 +26,9 @@
 <script>
   export default {
     name: "DetailBottomBar",
+    props: {
+      phone: String
+    },
     methods: {
       addToCart() {
         this.$emit('addCart')
@@ -38,8 +41,11 @@
       },
       goBuy() {
         this.$emit('goBuy')
+      },
+      // callPhone(){
+      //   window.location.href = 'tel:'+ this.phone
+      // },
 
-      }
     }
   }
 </script>

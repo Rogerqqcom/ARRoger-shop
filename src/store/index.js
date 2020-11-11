@@ -23,7 +23,9 @@ export default new Vuex.Store({
     //订单状态id
     ordersUri: '',
     // 保存个人中心页需要展示的用户名和地址
-    userData: ''
+    userData: '',
+    //商家登录成功后保存的商家信息
+    business: ''
 
   },
   mutations: {

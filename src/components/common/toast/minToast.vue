@@ -30,7 +30,7 @@
 		line-height: 1.4rem;
 		position: absolute;
 		left: 50%;
-		top: 20%;
+		top: 50%;
 		margin-left: -1.3rem;
 		margin-top: -0.7rem;
 		border-radius: 0.1rem;

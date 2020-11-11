@@ -17,8 +17,7 @@ const Address = () => import('../views/profile/childComps/address/Address')
 const AddAddress = () => import('../views/profile/childComps/address/AddAddress')
 const EditAddress = () => import('../views/profile/childComps/address/EditAddress')
 const Settlement =() => import('../views/settlement/Settlement')
-const Clothes = () => import('../views/recommend/Clothes')
-const OrderInfo = () => import('../views/order/OrderDetail')
+const OrderDetail = () => import('../views/order/OrderDetail')
 
 
 
@@ -88,9 +87,9 @@ const routes = [
     component: Order
   },
   {
-    path: '/orderInfo',
-    name: '物流信息',
-    component: OrderInfo
+    path: '/orderDetail',
+    name: '订单详情',
+    component: OrderDetail
   },
   {
     path: '/address',
@@ -113,30 +112,39 @@ const routes = [
     component: Settlement
   },
   {
-    path: '/fruit',
-    name: '水果特卖',
-    component: () => import('../views/recommend/Fruit')
-  },
-  {
-    path: '/clothes',
-    name: '衣服上新',
-    component: Clothes
-  },
-  {
-    path: '/shoes',
-    name: '精品好鞋',
-    component: () => import('../views/recommend/Shoes')
-  },
-  {
-    path: '/phone',
-    name: '爆款手机',
-    component: () => import('../views/recommend/Phone')
+    path: '/recommend',
+    name: '热们推荐',
+    component: () => import('../views/recommend/Recommend')
   },
   {
     path: '/comment',
     name: '商品评价',
     component: () => import('../views/order/OrderComment')
-  }
+  },
+  {
+    path: '/business',
+    name: '商家管理',
+    component: () => import('../views/business/Business')
+  },
+  {
+    path: '/adminGoods',
+    name: '管理商品',
+    component: () => import('../views/business/AdminGoods')
+  },
+  {
+    path: '/editProduct/:id',
+    component: () => import('../views/business/EditProduct')
+  },
+  {
+    path: '/adminOrder',
+    name: '管理订单',
+    component: () => import('../views/business/AdminOrder')
+  },
+  {
+    path: '/adminOrderDetail',
+    name: '管理订单详情',
+    component: () => import('../views/business/AdminOrderDetail')
+  },
 ]
 const router = new Router({
   // mode: 'history',
